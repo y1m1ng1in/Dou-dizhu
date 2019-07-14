@@ -46,19 +46,19 @@ This game has tons of ways to play, there are lots of mode to play as well. In t
 ##### The Rules of Card Pattern and Value
 - **Individual cards are ranked.** Colored Joker > Black & White Joker > 2 > Ace (A) > King (K) > Queen (Q) > Jack (J) > 10 > 9 > 8 > 7 > 6 > 5 > 4 > 3.
 
-- **Rocket** <br></br*Colored>*Colored Joker + black-and-white Joker* : <br></brIt>It can beat everything in the game. 
+- **Rocket** <br>*Colored Joker + black-and-white Joker* : <br>It can beat everything in the game. 
 
-- **Bomb** <br></br*Bomb> *3-3-3-3 (the lowest ranking Bomb)
-2-2-2-2 (the highest ranking Bomb)*
+- **Bomb** <br>*3-3-3-3 (the lowest ranking Bomb)<br>
+2-2-2-2 (the highest ranking Bomb)*<br>
 It can beat any other category (pattern) and individual card except Rocket or another Bomb with a higher or equal rank. 
 
-- **Compare only the same Category (Pattern)** 
+- **Compare only the same Category (Pattern)** <br>
 A player can only beat the prior hand using of the **same category (pattern)** but not the others.
 
-- **Compare only the Chains with the same length** except rocket and bomb
+- **Compare only the Chains with the same length** except rocket and bomb<br>
 For example, although both 9-10-J-Q-K and 3-4-5-6-7-8-9 are Single Chains, 9-10-J-Q-K cannot beat 3-4-5-6-7-8-9, nor vice versa.
 
-- **Jokers and 2 are non-consecutive cards**
+- **Jokers and 2 are non-consecutive cards**<br>
 Examples of illegal Chain: 2-3-4-5-6, 2-2-2-3-3-3 w/ A-A-7-7, K-A-2 + B&W Joker + Colored Joker.
 
 - **Categories (patterns)** 
