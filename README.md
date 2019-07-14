@@ -130,7 +130,7 @@ impl Renderable<Model> for Model {
 
 In your command line:
 ```commandline
-cargo install -force cargo-web
+cargo install --force cargo-web
 cargo web build
 cargo web start
 ```
