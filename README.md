@@ -8,11 +8,20 @@ Keywords:
 - Webapp
 - Yew (the framework used in the project)
 
+#### License
+[License](https://github.com/y1m1ng1in/Dou-dizhu/blob/master/LICENSE)
+
 **Table of Contents**
-
-[TOCM]
-
-[TOC]
+- [Dou dizhu -- A traditional Chinese card game inplementation](#dou-dizhu----a-traditional-chinese-card-game-inplementation)
+    + [License](#license)
+    + [Group Member](#group-member)
+    + [Project Details](#project-details)
+      - [Overview](#overview)
+      - [Game Process](#game-process)
+      - [The Rules of Card Pattern and Value](#the-rules-of-card-pattern-and-value)
+    + [An Example Illustrates the Operation of the Code](#an-example-illustrates-the-operation-of-the-code)
+    + [Build and Run](#build-and-run)
+    + [Schedule and Milestone](#schedule-and-milestone)
 
 #### Group Member
 Yiming Lin (Email address: yl6@pdx.edu)
