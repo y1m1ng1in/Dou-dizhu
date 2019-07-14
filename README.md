@@ -44,7 +44,7 @@ This game has tons of ways to play, there are lots of mode to play as well. In t
 4. Repeat process 2 and 3 until either the player or the computer has no card left first. 
 
 ##### The Rules of Card Pattern and Value
-- **Individual cards are ranked.** Colored Joker > Black & White Joker > 2 > Ace (A) > King (K) > Queen (Q) > Jack (J) > 10 > 9 > 8 > 7 > 6 > 5 > 4 > 3.
+- **Individual cards are ranked.**<br> Colored Joker > Black & White Joker > 2 > Ace (A) > King (K) > Queen (Q) > Jack (J) > 10 > 9 > 8 > 7 > 6 > 5 > 4 > 3.
 
 - **Rocket** <br>*Colored Joker + black-and-white Joker* : <br>It can beat everything in the game. 
 
@@ -139,7 +139,7 @@ Then open your browser: use the following url:
 localhost:8000
 
 #### Schedule and Milestone
-July 20th: Finish game logic
-July 27th: Finish game UI
-Augest 3rd: Finish testing and bugs fixing
-Augest 10th: Optimize UI and final delivery
+July 20th: Finish game logic<br>
+July 27th: Finish game UI<br>
+Augest 3rd: Finish testing and bugs fixing<br>
+Augest 10th: Optimize UI and final delivery<br>
