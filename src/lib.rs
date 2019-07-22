@@ -1,5 +1,7 @@
 #![recursion_limit = "256"]
 
+pub mod cards;
+
 use yew::services::ConsoleService;
 use yew::{html, Component, ComponentLink, Html, Renderable, ShouldRender};
 
