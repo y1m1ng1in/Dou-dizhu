@@ -93,7 +93,7 @@ impl<'a> PairChain<'a> {
                         i += 1;
                     } else {
                         previous = cards[i].value;
-                        current_size = 1;   // change += to = 
+                        current_size = 1; // change += to =
                         result.push(i);
                         result.push(i + 1);
                         i += 2;
@@ -105,6 +105,52 @@ impl<'a> PairChain<'a> {
 
         if current_size == size {
             Some(result)
+        } else {
+            None
+        }
+    }
+
+    pub fn search_longest_cards(cards: &Vec<Card>) -> Option<Vec<usize>> {
+        let mut largest = Vec::new();
+        let mut current = Vec::new();
+        let mut i: usize = 0;
+        let mut previous: u32 = 0;
+
+        while i + 1 < cards.len() {
+            if cards[i].value == previous {
+                i += 1;
+            } else if Pair::is_pair(&vec![&cards[i], &cards[i + 1]])
+                && cards[i].value == previous + 1
+            {
+                previous = cards[i].value;
+                current.push(i);
+                current.push(i + 1);
+                i += 2;
+            } else {
+                if current.len() > largest.len() {
+                    largest = Vec::new();
+                    largest.append(&mut current);
+                } else {
+                    current = Vec::new();
+                }
+                while i + 1 < cards.len() {
+                    if !Pair::is_pair(&vec![&cards[i], &cards[i + 1]]) {
+                        i += 1;
+                    } else {
+                        previous = cards[i].value;
+                        current.push(i);
+                        current.push(i + 1);
+                        i += 2;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if current.len() > largest.len() && current.len() >= 6 {
+            Some(current)
+        } else if largest.len() >= 6 {
+            Some(largest)
         } else {
             None
         }

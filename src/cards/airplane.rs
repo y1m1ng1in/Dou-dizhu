@@ -1,7 +1,7 @@
 use super::card::Card;
+use super::card::Suit;
 use super::pair::Pair;
 use super::trio::Trio;
-use super::card::Suit;
 
 pub struct Airplane<'a> {
     chain: Vec<&'a Card>,
@@ -135,7 +135,7 @@ impl<'a> Airplane<'a> {
         let mut i: usize = start_from;
         let mut previous = 0;
         let mut current_size = 0;
-        let mut result = Vec::new(); 
+        let mut result = Vec::new();
 
         if start_from >= cards.len() || start_from + 3 * size >= cards.len() {
             return None;
@@ -145,7 +145,7 @@ impl<'a> Airplane<'a> {
             if cards[i].value == previous {
                 i += 1;
             } else if Trio::is_trio(&vec![&cards[i], &cards[i + 1], &cards[i + 2]])
-                && cards[i].value == previous + 1 
+                && cards[i].value == previous + 1
             {
                 previous = cards[i].value;
                 current_size += 1;
@@ -181,12 +181,17 @@ impl<'a> Airplane<'a> {
 
         if current_size != size {
             return None;
-        } 
-            
+        }
+
         Airplane::search_kickers(cards, &mut result, size, pair_kicker)
     }
 
-    fn search_kickers(cards: &Vec<Card>, trio_indices: &mut Vec<usize>, size: usize, pair_kicker: bool) -> Option<Vec<usize>> {
+    fn search_kickers(
+        cards: &Vec<Card>,
+        trio_indices: &mut Vec<usize>,
+        size: usize,
+        pair_kicker: bool,
+    ) -> Option<Vec<usize>> {
         let mut result = Vec::new();
         let mut i: usize = 0;
         let mut current_size = 0;
