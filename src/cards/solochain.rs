@@ -82,4 +82,41 @@ impl<'a> SoloChain<'a> {
             None
         }
     }
+
+    pub fn search_longest_cards(cards: &Vec<Card>) -> Option<Vec<usize>> {
+        let mut largest = Vec::new();
+        let mut current = Vec::new();
+        let mut i: usize = 0;
+        let mut size: usize = 0;
+        let mut previous: u32 = 0;
+
+        while i < cards.len() {
+            if cards[i].value == previous {
+                i += 1;
+            } else if cards[i].value == previous + 1 {
+                current.push(i);
+                previous = cards[i].value;
+                size += 1;
+            } else {
+                if largest.len() < size {
+                    largest = Vec::new();
+                    largest.append(&mut current);
+                } else {
+                    current = Vec::new();
+                }
+                current.push(i);
+                previous = cards[i].value;
+                size = 1;
+                i += 1;
+            }
+        }
+
+        if size > largest.len() && size >= 5 {
+            Some(current)
+        } else if largest.len() >= 5 {
+            Some(largest)
+        } else {
+            None
+        }
+    }
 }

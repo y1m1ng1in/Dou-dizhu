@@ -196,8 +196,8 @@ fn solochain_searching_greater_than() {
     let d9 = Card::new(12_u32, Suit::Club, false);
     let d10 = Card::new(13_u32, Suit::Club, false);
 
-    let mut cards1 = vec![c1, c2, c3, c4, c5];
-    let mut cards2 = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10];
+    let cards1 = vec![c1, c2, c3, c4, c5];
+    let cards2 = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10];
 
     {
         let v = vec![&cards1[0], &cards1[1], &cards1[2], &cards1[3], &cards1[4]];
@@ -241,8 +241,8 @@ fn pairchain_searching_greater_than() {
     let d10 = Card::new(7_u32, Suit::Club, false);
     let d11 = Card::new(7_u32, Suit::Club, false);
 
-    let mut cards1 = vec![c1, c2, c3, c4, c5, c6];
-    let mut cards2 = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11];
+    let cards1 = vec![c1, c2, c3, c4, c5, c6];
+    let cards2 = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11];
 
     {
         let v1 = vec![
@@ -295,8 +295,8 @@ fn airplane_searching_greater_than_1() {
     let d11 = Card::new(11_u32, Suit::Club, false);
     let d12 = Card::new(12_u32, Suit::Club, false);
 
-    let mut cards1 = vec![c1, c2, c3, c4, c5, c6, c7, c8, c9, c10];
-    let mut cards2 = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12];
+    let cards1 = vec![c1, c2, c3, c4, c5, c6, c7, c8, c9, c10];
+    let cards2 = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12];
 
     {
         let v1 = vec![
@@ -353,8 +353,8 @@ fn airplane_searching_greater_than_2() {
     let d11 = Card::new(10_u32, Suit::Club, false);
     let d12 = Card::new(12_u32, Suit::Club, false);
 
-    let mut cards1 = vec![c1, c2, c3, c4, c5, c6, c7, c8, c9, c10];
-    let mut cards2 = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12];
+    let cards1 = vec![c1, c2, c3, c4, c5, c6, c7, c8, c9, c10];
+    let cards2 = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12];
 
     {
         let v1 = vec![
@@ -413,8 +413,8 @@ fn airplane_searching_greater_than_3() {
     let d14 = Card::new(11_u32, Suit::Club, false);
     let d15 = Card::new(12_u32, Suit::Club, false);
 
-    let mut cards1 = vec![c1, c2, c3, c4, c5, c6, c7, c8, c9, c10];
-    let mut cards2 = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13, d14, d15];
+    let cards1 = vec![c1, c2, c3, c4, c5, c6, c7, c8, c9, c10];
+    let cards2 = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13, d14, d15];
 
     {
         let v1 = vec![
@@ -442,5 +442,139 @@ fn airplane_searching_greater_than_3() {
         let x = Airplane::new(&v1);
         let r = Airplane::search_greater_cards(&cards2, &x).unwrap();
         assert_eq!(r, vec![8, 9, 10, 11, 12, 13, 0, 1, 3, 4]);
+    }
+}
+
+#[test]
+fn solochain_searching_longest_1() {
+    let d1 = Card::new(3_u32, Suit::Club, false);
+    let d2 = Card::new(4_u32, Suit::Club, false);
+    let d3 = Card::new(5_u32, Suit::Club, false);
+    let d4 = Card::new(7_u32, Suit::Club, false);
+    let d5 = Card::new(7_u32, Suit::Club, false);
+    let d6 = Card::new(8_u32, Suit::Club, false);
+    let d7 = Card::new(9_u32, Suit::Club, false);
+    let d8 = Card::new(10_u32, Suit::Club, false);
+    let d9 = Card::new(10_u32, Suit::Club, false);
+    let d10 = Card::new(10_u32, Suit::Club, false);
+    let d11 = Card::new(11_u32, Suit::Club, false);
+    let d12 = Card::new(12_u32, Suit::Club, false);
+    let d13 = Card::new(13_u32, Suit::Club, false);
+    let d14 = Card::new(14_u32, Suit::Club, false);
+    let d15 = Card::new(16_u32, Suit::Club, false);
+
+    let cs = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13, d14, d15];
+
+    {
+        let x = SoloChain::search_longest_cards(&cs).unwrap();
+        assert_eq!(x, vec![3, 5, 6, 7, 10, 11, 12, 13]);
+    }
+}
+
+#[test]
+fn solochain_searching_longest_2() {
+    let d1 = Card::new(3_u32, Suit::Club, false);
+    let d2 = Card::new(4_u32, Suit::Club, false);
+    let d3 = Card::new(5_u32, Suit::Club, false);
+    let d4 = Card::new(6_u32, Suit::Club, false);
+    let d5 = Card::new(7_u32, Suit::Club, false);
+    let d6 = Card::new(7_u32, Suit::Club, false);
+    let d7 = Card::new(9_u32, Suit::Club, false);
+    let d8 = Card::new(10_u32, Suit::Club, false);
+    let d9 = Card::new(11_u32, Suit::Club, false);
+    let d10 = Card::new(12_u32, Suit::Club, false);
+    let d11 = Card::new(13_u32, Suit::Club, false);
+    let d12 = Card::new(14_u32, Suit::Club, false);
+    let d13 = Card::new(15_u32, Suit::Club, false);
+    let d14 = Card::new(20_u32, Suit::Club, false);
+    let d15 = Card::new(20_u32, Suit::Club, false);
+
+    let cs = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13, d14, d15];
+
+    {
+        let x = SoloChain::search_longest_cards(&cs).unwrap();
+        assert_eq!(x, vec![6, 7, 8, 9, 10, 11, 12]);
+    }
+}
+
+#[test]
+fn solochain_searching_longest_3() {
+    let d1 = Card::new(3_u32, Suit::Club, false);
+    let d2 = Card::new(4_u32, Suit::Club, false);
+    let d3 = Card::new(5_u32, Suit::Club, false);
+    let d4 = Card::new(6_u32, Suit::Club, false);
+    let d5 = Card::new(7_u32, Suit::Club, false);
+    let d6 = Card::new(7_u32, Suit::Club, false);
+    let d7 = Card::new(9_u32, Suit::Club, false);
+    let d8 = Card::new(10_u32, Suit::Club, false);
+    let d9 = Card::new(11_u32, Suit::Club, false);
+    let d10 = Card::new(12_u32, Suit::Club, false);
+    let d11 = Card::new(13_u32, Suit::Club, false);
+    let d12 = Card::new(14_u32, Suit::Club, false);
+    let d13 = Card::new(15_u32, Suit::Club, false);
+
+
+    let cs = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13];
+
+    {
+        let x = SoloChain::search_longest_cards(&cs).unwrap();
+        assert_eq!(x, vec![6, 7, 8, 9, 10, 11, 12]);
+    }
+}
+
+#[test]
+fn solochain_searching_longest_4() {
+    let d1 = Card::new(3_u32, Suit::Club, false);
+    let d2 = Card::new(4_u32, Suit::Club, false);
+    let d3 = Card::new(5_u32, Suit::Club, false);
+    let d4 = Card::new(6_u32, Suit::Club, false);
+    let d5 = Card::new(8_u32, Suit::Club, false);
+    let d6 = Card::new(10_u32, Suit::Club, false);
+    let d7 = Card::new(11_u32, Suit::Club, false);
+    let d8 = Card::new(12_u32, Suit::Club, false);
+    let d9 = Card::new(13_u32, Suit::Club, false);
+    let d10 = Card::new(15_u32, Suit::Club, false);
+    let d11 = Card::new(16_u32, Suit::Club, false);
+    let d12 = Card::new(18_u32, Suit::Club, false);
+    let d13 = Card::new(19_u32, Suit::Club, false);
+
+
+    let cs = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13,];
+
+    {
+        let x = SoloChain::search_longest_cards(&cs);
+        assert_eq!(x, None);
+    }
+}
+
+#[test]
+fn solochain_searching_longest_5() {
+    let d1 = Card::new(3_u32, Suit::Club, false);
+    let d2 = Card::new(4_u32, Suit::Club, false);
+    let d3 = Card::new(5_u32, Suit::Club, false);
+    let d4 = Card::new(6_u32, Suit::Club, false);
+    let d5 = Card::new(8_u32, Suit::Club, false);
+
+    let cs = vec![d1, d2, d3, d4, d5,];
+
+    {
+        let x = SoloChain::search_longest_cards(&cs);
+        assert_eq!(x, None);
+    }
+}
+
+#[test]
+fn solochain_searching_longest_6() {
+    let d1 = Card::new(3_u32, Suit::Club, false);
+    let d2 = Card::new(4_u32, Suit::Club, false);
+    let d3 = Card::new(5_u32, Suit::Club, false);
+    let d4 = Card::new(6_u32, Suit::Club, false);
+    let d5 = Card::new(7_u32, Suit::Club, false);
+
+    let cs = vec![d1, d2, d3, d4, d5,];
+
+    {
+        let x = SoloChain::search_longest_cards(&cs).unwrap();
+        assert_eq!(x, vec![0,1,2,3,4]);
     }
 }
