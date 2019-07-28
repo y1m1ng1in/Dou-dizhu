@@ -339,7 +339,7 @@ impl<'a> Airplane<'a> {
         }
 
         if solo_current < 2 && pair_current < 2 {
-            return None;
+            return Some(trio_indices.to_vec());
         }
 
         if solo_current < size {
@@ -364,3 +364,4 @@ impl<'a> Airplane<'a> {
         }
     }
 }
+

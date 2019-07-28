@@ -248,19 +248,6 @@ fn pairchain_searching_greater_than() {
         let v1 = vec![
             &cards1[0], &cards1[1], &cards1[2], &cards1[3], &cards1[4], &cards1[5],
         ];
-        let v2 = vec![
-            &cards2[0],
-            &cards2[1],
-            &cards2[2],
-            &cards2[3],
-            &cards2[4],
-            &cards2[5],
-            &cards2[6],
-            &cards2[7],
-            &cards2[8],
-            &cards2[9],
-            &cards2[10],
-        ];
         let x = PairChain::new(v1);
         let r = PairChain::search_greater_cards(&cards2, &x).unwrap();
         assert_eq!(r, vec![0, 1, 2, 3, 6, 7]);
@@ -302,20 +289,6 @@ fn airplane_searching_greater_than_1() {
         let v1 = vec![
             &cards1[0], &cards1[1], &cards1[2], &cards1[3], &cards1[4], &cards1[5], &cards1[6],
             &cards1[7], &cards1[8], &cards1[9],
-        ];
-        let v2 = vec![
-            &cards2[0],
-            &cards2[1],
-            &cards2[2],
-            &cards2[3],
-            &cards2[4],
-            &cards2[5],
-            &cards2[6],
-            &cards2[7],
-            &cards2[8],
-            &cards2[9],
-            &cards2[10],
-            &cards2[11],
         ];
         assert_eq!(true, Airplane::is_airplane(&v1));
         let x = Airplane::new(&v1);
@@ -359,20 +332,6 @@ fn airplane_searching_greater_than_2() {
         let v1 = vec![
             &cards1[0], &cards1[1], &cards1[2], &cards1[3], &cards1[4], &cards1[5], &cards1[6],
             &cards1[7], &cards1[8], &cards1[9],
-        ];
-        let v2 = vec![
-            &cards2[0],
-            &cards2[1],
-            &cards2[2],
-            &cards2[3],
-            &cards2[4],
-            &cards2[5],
-            &cards2[6],
-            &cards2[7],
-            &cards2[8],
-            &cards2[9],
-            &cards2[10],
-            &cards2[11],
         ];
         assert_eq!(true, Airplane::is_airplane(&v1));
         let x = Airplane::new(&v1);
@@ -421,23 +380,6 @@ fn airplane_searching_greater_than_3() {
         let v1 = vec![
             &cards1[0], &cards1[1], &cards1[2], &cards1[3], &cards1[4], &cards1[5], &cards1[6],
             &cards1[7], &cards1[8], &cards1[9],
-        ];
-        let v2 = vec![
-            &cards2[0],
-            &cards2[1],
-            &cards2[2],
-            &cards2[3],
-            &cards2[4],
-            &cards2[5],
-            &cards2[6],
-            &cards2[7],
-            &cards2[8],
-            &cards2[9],
-            &cards2[10],
-            &cards2[11],
-            &cards2[12],
-            &cards2[13],
-            &cards2[14],
         ];
         assert_eq!(true, Airplane::is_airplane(&v1));
         let x = Airplane::new(&v1);
@@ -730,7 +672,30 @@ fn airplane_searching_longest_4() {
     let cs = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10];
 
     {
-        let x = Airplane::search_longest_cards(&cs);
-        assert_eq!(x, None);
+        let x = Airplane::search_longest_cards(&cs).unwrap();
+        assert_eq!(x, vec![0,1,2,3,4,5,6,7,8]);
+    }
+}
+
+#[test]
+fn airplane_searching_longest_5() {
+    // 333-444-7-8
+    let d1 = Card::new(3_u32, Suit::Club, false);
+    let d2 = Card::new(3_u32, Suit::Club, false);
+    let d3 = Card::new(3_u32, Suit::Club, false);
+    let d4 = Card::new(4_u32, Suit::Club, false);
+    let d5 = Card::new(4_u32, Suit::Club, false);
+    let d6 = Card::new(4_u32, Suit::Club, false);
+    let d7 = Card::new(5_u32, Suit::Club, false);
+    let d8 = Card::new(5_u32, Suit::Club, false);
+    let d9 = Card::new(5_u32, Suit::Club, false);
+    let d10 = Card::new(7_u32, Suit::Club, false);
+    let d11 = Card::new(8_u32, Suit::Club, false);
+
+    let cs = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11];
+
+    {
+        let x = Airplane::search_longest_cards(&cs).unwrap();
+        assert_eq!(x, vec![0,1,2,3,4,5,9,10]);
     }
 }
