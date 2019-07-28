@@ -39,6 +39,62 @@ impl<'a> Bomb<'a> {
 
         true
     }
+
+    pub fn search_greater_cards(cards: &Vec<Card>, greater_than: &Bomb) -> Option<Vec<usize>> {
+        let mut i: usize = 0;
+        let val = greater_than.card1.value;
+        let mut result = Vec::new();
+
+        while i + 3 < cards.len() {
+            if Bomb::is_bomb(&vec![
+                &cards[i],
+                &cards[i + 1],
+                &cards[i + 2],
+                &cards[i + 3],
+            ]) {
+                if cards[i].value > val {
+                    result.push(i);
+                    result.push(i + 1);
+                    result.push(i + 2);
+                    result.push(i + 3);
+                    break;
+                } else {
+                    i += 4;
+                }
+            } else {
+                i += 1;
+            }
+        }
+
+        if result.is_empty() {
+            None
+        } else {
+            Some(result)
+        }
+    }
+
+    pub fn split_from_cards(cards: &mut Vec<Card>) -> (Vec<Card>, Vec<Card>) {
+        let mut i: usize = 0;
+        let mut result = Vec::new();
+
+        while i + 3 < cards.len() {
+            if Bomb::is_bomb(&vec![
+                &cards[i],
+                &cards[i + 1],
+                &cards[i + 2],
+                &cards[i + 3],
+            ]) {
+                for _ in 0..4 {
+                    result.push(cards.remove(i));
+                }
+                break;
+            } else {
+                i += 1;
+            }
+        }
+
+        (result, cards.to_vec())
+    }
 }
 
 impl<'a> Rocket<'a> {

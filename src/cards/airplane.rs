@@ -291,7 +291,10 @@ impl<'a> Airplane<'a> {
         Airplane::search_longest_kickers(cards, &mut largest)
     }
 
-    fn search_longest_kickers(cards: &Vec<Card>, trio_indices: &mut Vec<usize>) -> Option<Vec<usize>> {
+    fn search_longest_kickers(
+        cards: &Vec<Card>,
+        trio_indices: &mut Vec<usize>,
+    ) -> Option<Vec<usize>> {
         let size: usize = trio_indices.len() / 3;
         let mut i: usize = 0;
         let mut solo_current = 0;
@@ -349,7 +352,7 @@ impl<'a> Airplane<'a> {
                     trio_indices.pop();
                 }
                 trio_indices.append(&mut solo_kickers);
-                return Some(trio_indices.to_vec())
+                return Some(trio_indices.to_vec());
             } else {
                 let reduce = (size - pair_current) * 3;
                 for _i in 0..reduce {
@@ -364,4 +367,3 @@ impl<'a> Airplane<'a> {
         }
     }
 }
-

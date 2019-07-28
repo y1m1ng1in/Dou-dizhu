@@ -1,3 +1,6 @@
+use std::fmt;
+
+#[derive(PartialEq, Copy, Clone)]
 pub enum Suit {
     Heart,
     Spade,
@@ -6,6 +9,7 @@ pub enum Suit {
     Joker,
 }
 
+#[derive(Copy, Clone)]
 pub struct Card {
     pub value: u32,
     pub suit: Suit,
@@ -35,5 +39,33 @@ impl Card {
         }
 
         None
+    }
+}
+
+impl fmt::Display for Suit {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> Result<(), ::std::fmt::Error> {
+        match *self {
+            Suit::Heart => f.write_str("Heart"),
+            Suit::Spade => f.write_str("Spade"),
+            Suit::Club => f.write_str("Club"),
+            Suit::Diamond => f.write_str("Diamond"),
+            Suit::Joker => f.write_str("Joker"),
+        }
+    }
+}
+
+impl PartialEq for Card {
+    fn eq(&self, other: &Self) -> bool {
+        self.value == other.value && self.suit == other.suit && self.selected == other.selected
+    }
+}
+
+impl fmt::Debug for Card {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "Card {{ value: {}, suit: {}, selected: {} }}\n",
+            self.value, self.suit, self.selected
+        )
     }
 }

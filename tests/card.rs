@@ -606,7 +606,7 @@ fn airplane_searching_longest_1() {
 
     {
         let x = Airplane::search_longest_cards(&cs).unwrap();
-        assert_eq!(x, vec![2,3,4,5,6,7,8,9,10,0,1,11]);
+        assert_eq!(x, vec![2, 3, 4, 5, 6, 7, 8, 9, 10, 0, 1, 11]);
     }
 }
 
@@ -628,7 +628,7 @@ fn airplane_searching_longest_2() {
 
     {
         let x = Airplane::search_longest_cards(&cs).unwrap();
-        assert_eq!(x, vec![0,1,2,3,4,5,6,7]);
+        assert_eq!(x, vec![0, 1, 2, 3, 4, 5, 6, 7]);
     }
 }
 
@@ -652,7 +652,7 @@ fn airplane_searching_longest_3() {
 
     {
         let x = Airplane::search_longest_cards(&cs).unwrap();
-        assert_eq!(x, vec![0,1,2,3,4,5,6,7,8,9,10,11]);
+        assert_eq!(x, vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
     }
 }
 
@@ -673,7 +673,7 @@ fn airplane_searching_longest_4() {
 
     {
         let x = Airplane::search_longest_cards(&cs).unwrap();
-        assert_eq!(x, vec![0,1,2,3,4,5,6,7,8]);
+        assert_eq!(x, vec![0, 1, 2, 3, 4, 5, 6, 7, 8]);
     }
 }
 
@@ -696,6 +696,35 @@ fn airplane_searching_longest_5() {
 
     {
         let x = Airplane::search_longest_cards(&cs).unwrap();
-        assert_eq!(x, vec![0,1,2,3,4,5,9,10]);
+        assert_eq!(x, vec![0, 1, 2, 3, 4, 5, 9, 10]);
+    }
+}
+
+#[test]
+fn bomb_split() {
+    let d1 = Card::new(3_u32, Suit::Club, false);
+    let d2 = Card::new(3_u32, Suit::Club, false);
+    let d3 = Card::new(3_u32, Suit::Club, false);
+    let d4 = Card::new(3_u32, Suit::Club, false);
+    let d5 = Card::new(4_u32, Suit::Club, false);
+    let d6 = Card::new(4_u32, Suit::Club, false);
+    let d7 = Card::new(5_u32, Suit::Club, false);
+    let d8 = Card::new(5_u32, Suit::Club, false);
+    let d9 = Card::new(5_u32, Suit::Club, false);
+    let d10 = Card::new(7_u32, Suit::Club, false);
+    let d11 = Card::new(8_u32, Suit::Club, false);
+
+    let mut cs = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11];
+
+    let r1 = vec![
+        Card::new(3_u32, Suit::Club, false),
+        Card::new(3_u32, Suit::Club, false),
+        Card::new(3_u32, Suit::Club, false),
+        Card::new(3_u32, Suit::Club, false),
+    ];
+
+    {
+        let x = Bomb::split_from_cards(&mut cs);
+        assert_eq!(x.0, r1);
     }
 }
