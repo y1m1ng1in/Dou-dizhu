@@ -238,4 +238,129 @@ impl<'a> Airplane<'a> {
             None
         }
     }
+
+    pub fn search_longest_cards(cards: &Vec<Card>) -> Option<Vec<usize>> {
+        let mut largest = Vec::new();
+        let mut current = Vec::new();
+        let mut i: usize = 0;
+        let mut previous: u32 = 0;
+
+        while i + 2 < cards.len() {
+            if cards[i].value == previous {
+                i += 1;
+            } else if Trio::is_trio(&vec![&cards[i], &cards[i + 1], &cards[i + 2]])
+                && cards[i].value == previous + 1
+            {
+                previous = cards[i].value;
+                current.push(i);
+                current.push(i + 1);
+                current.push(i + 2);
+                i += 3;
+            } else {
+                if current.len() > largest.len() {
+                    largest = Vec::new();
+                    largest.append(&mut current);
+                } else {
+                    current = Vec::new();
+                }
+                while i + 2 < cards.len() {
+                    if !Trio::is_trio(&vec![&cards[i], &cards[i + 1], &cards[i + 2]]) {
+                        i += 1;
+                    } else {
+                        previous = cards[i].value;
+                        current.push(i);
+                        current.push(i + 1);
+                        current.push(i + 2);
+                        i += 3;
+                        break;
+                    }
+                }
+            }
+        }
+
+        let mut size: usize = 0;
+
+        if current.len() > largest.len() && current.len() >= 6 {
+            largest = Vec::new();
+            largest.append(&mut current);
+            size = largest.len() / 3;
+        } else if largest.len() < 6 {
+            return None;
+        }
+
+        Airplane::search_longest_kickers(cards, &mut largest)
+    }
+
+    fn search_longest_kickers(cards: &Vec<Card>, trio_indices: &mut Vec<usize>) -> Option<Vec<usize>> {
+        let size: usize = trio_indices.len() / 3;
+        let mut i: usize = 0;
+        let mut solo_current = 0;
+        let mut pair_current = 0;
+        let mut solo_kickers = Vec::new();
+        let mut pair_kickers = Vec::new();
+
+        while i + 1 < cards.len() {
+            if Pair::is_pair(&vec![&cards[i], &cards[i + 1]]) {
+                if !trio_indices.contains(&i) && !trio_indices.contains(&(i + 1)) {
+                    pair_kickers.push(i);
+                    pair_kickers.push(i + 1);
+                    pair_current += 1;
+                    if pair_current == size {
+                        break;
+                    } else {
+                        i += 2;
+                    }
+                } else {
+                    i += 1;
+                }
+            } else {
+                i += 1;
+            }
+        }
+
+        if pair_current < size {
+            i = 0;
+            while i < cards.len() {
+                if !trio_indices.contains(&i) {
+                    solo_kickers.push(i);
+                    solo_current += 1;
+                    if solo_current == size {
+                        break;
+                    } else {
+                        i += 1;
+                    }
+                } else {
+                    i += 1;
+                }
+            }
+        } else {
+            trio_indices.append(&mut pair_kickers);
+            return Some(trio_indices.to_vec());
+        }
+
+        if solo_current < 2 && pair_current < 2 {
+            return None;
+        }
+
+        if solo_current < size {
+            if solo_current > pair_current {
+                let reduce = (size - solo_current) * 3;
+                for _i in 0..reduce {
+                    trio_indices.pop();
+                }
+                trio_indices.append(&mut solo_kickers);
+                return Some(trio_indices.to_vec())
+            } else {
+                let reduce = (size - pair_current) * 3;
+                for _i in 0..reduce {
+                    trio_indices.pop();
+                }
+                trio_indices.append(&mut pair_kickers);
+                return Some(trio_indices.to_vec());
+            }
+        } else {
+            trio_indices.append(&mut solo_kickers);
+            return Some(trio_indices.to_vec());
+        }
+    }
 }

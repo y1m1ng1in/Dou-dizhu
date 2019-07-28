@@ -643,3 +643,94 @@ fn pairchain_searching_longest_3() {
         assert_eq!(x, vec![4, 5, 6, 7, 8, 9, 11, 12]);
     }
 }
+
+#[test]
+fn airplane_searching_longest_1() {
+    let d1 = Card::new(3_u32, Suit::Club, false);
+    let d2 = Card::new(4_u32, Suit::Club, false);
+    let d3 = Card::new(5_u32, Suit::Club, false);
+    let d4 = Card::new(5_u32, Suit::Club, false);
+    let d5 = Card::new(5_u32, Suit::Club, false);
+    let d6 = Card::new(6_u32, Suit::Club, false);
+    let d7 = Card::new(6_u32, Suit::Club, false);
+    let d8 = Card::new(6_u32, Suit::Club, false);
+    let d9 = Card::new(7_u32, Suit::Club, false);
+    let d10 = Card::new(7_u32, Suit::Club, false);
+    let d11 = Card::new(7_u32, Suit::Club, false);
+    let d12 = Card::new(8_u32, Suit::Club, false);
+    let d13 = Card::new(9_u32, Suit::Club, false);
+
+    let cs = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13];
+
+    {
+        let x = Airplane::search_longest_cards(&cs).unwrap();
+        assert_eq!(x, vec![2,3,4,5,6,7,8,9,10,0,1,11]);
+    }
+}
+
+#[test]
+fn airplane_searching_longest_2() {
+    let d1 = Card::new(3_u32, Suit::Club, false);
+    let d2 = Card::new(3_u32, Suit::Club, false);
+    let d3 = Card::new(3_u32, Suit::Club, false);
+    let d4 = Card::new(4_u32, Suit::Club, false);
+    let d5 = Card::new(4_u32, Suit::Club, false);
+    let d6 = Card::new(4_u32, Suit::Club, false);
+    let d7 = Card::new(6_u32, Suit::Club, false);
+    let d8 = Card::new(6_u32, Suit::Club, false);
+    let d9 = Card::new(7_u32, Suit::Club, false);
+    let d10 = Card::new(8_u32, Suit::Club, false);
+    let d11 = Card::new(9_u32, Suit::Club, false);
+
+    let cs = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11];
+
+    {
+        let x = Airplane::search_longest_cards(&cs).unwrap();
+        assert_eq!(x, vec![0,1,2,3,4,5,6,7]);
+    }
+}
+
+#[test]
+fn airplane_searching_longest_3() {
+    let d1 = Card::new(3_u32, Suit::Club, false);
+    let d2 = Card::new(3_u32, Suit::Club, false);
+    let d3 = Card::new(3_u32, Suit::Club, false);
+    let d4 = Card::new(4_u32, Suit::Club, false);
+    let d5 = Card::new(4_u32, Suit::Club, false);
+    let d6 = Card::new(4_u32, Suit::Club, false);
+    let d7 = Card::new(5_u32, Suit::Club, false);
+    let d8 = Card::new(5_u32, Suit::Club, false);
+    let d9 = Card::new(5_u32, Suit::Club, false);
+    let d10 = Card::new(7_u32, Suit::Club, false);
+    let d11 = Card::new(7_u32, Suit::Club, false);
+    let d12 = Card::new(8_u32, Suit::Club, false);
+    let d13 = Card::new(8_u32, Suit::Club, false);
+
+    let cs = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13];
+
+    {
+        let x = Airplane::search_longest_cards(&cs).unwrap();
+        assert_eq!(x, vec![0,1,2,3,4,5,6,7,8,9,10,11]);
+    }
+}
+
+#[test]
+fn airplane_searching_longest_4() {
+    let d1 = Card::new(3_u32, Suit::Club, false);
+    let d2 = Card::new(3_u32, Suit::Club, false);
+    let d3 = Card::new(3_u32, Suit::Club, false);
+    let d4 = Card::new(4_u32, Suit::Club, false);
+    let d5 = Card::new(4_u32, Suit::Club, false);
+    let d6 = Card::new(4_u32, Suit::Club, false);
+    let d7 = Card::new(5_u32, Suit::Club, false);
+    let d8 = Card::new(5_u32, Suit::Club, false);
+    let d9 = Card::new(5_u32, Suit::Club, false);
+    let d10 = Card::new(7_u32, Suit::Club, false);
+
+    let cs = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10];
+
+    {
+        let x = Airplane::search_longest_cards(&cs);
+        assert_eq!(x, None);
+    }
+}
