@@ -73,7 +73,7 @@ impl<'a> Bomb<'a> {
         }
     }
 
-    pub fn split_from_cards(cards: &mut Vec<Card>) -> (Vec<Card>, Vec<Card>) {
+    pub fn split_from_cards(cards: &mut Vec<Card>) -> (Vec<Card>, &mut Vec<Card>) {
         let mut i: usize = 0;
         let mut result = Vec::new();
 
@@ -93,7 +93,7 @@ impl<'a> Bomb<'a> {
             }
         }
 
-        (result, cards.to_vec())
+        (result, cards)
     }
 }
 

@@ -723,8 +723,19 @@ fn bomb_split() {
         Card::new(3_u32, Suit::Club, false),
     ];
 
+    let r2 = vec![
+        Card::new(4_u32, Suit::Club, false),
+        Card::new(4_u32, Suit::Club, false),
+        Card::new(5_u32, Suit::Club, false),
+        Card::new(5_u32, Suit::Club, false),
+        Card::new(5_u32, Suit::Club, false),
+        Card::new(7_u32, Suit::Club, false),
+        Card::new(8_u32, Suit::Club, false),
+    ];
+
     {
         let x = Bomb::split_from_cards(&mut cs);
         assert_eq!(x.0, r1);
+        assert_eq!(x.1.to_vec(), r2);
     }
 }
