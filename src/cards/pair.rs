@@ -45,4 +45,22 @@ impl<'a> Pair<'a> {
 
         None
     }
+
+    pub fn split_from_cards(cards: &mut Vec<Card>) -> Vec<Card> {
+        let mut i: usize = 0;
+        let mut result = Vec::new();
+
+        while i + 1 < cards.len() {
+            if Pair::is_pair(&vec![&cards[i], &cards[i + 1]]) {
+                for _ in 0..2 {
+                    result.push(cards.remove(i));
+                }
+                break;
+            } else {
+                i += 1;
+            }
+        }
+
+        result
+    }
 }

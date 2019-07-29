@@ -735,7 +735,7 @@ fn bomb_split() {
 
     {
         let x = Bomb::split_from_cards(&mut cs);
-        assert_eq!(x.0, r1);
-        assert_eq!(x.1.to_vec(), r2);
+        assert_eq!(x, r1);
+        assert_eq!(cs.to_vec(), r2);
     }
 }

@@ -43,4 +43,22 @@ impl<'a> Trio<'a> {
 
         None
     }
+
+    pub fn split_from_cards(cards: &mut Vec<Card>) -> Vec<Card> {
+        let mut i: usize = 0;
+        let mut result = Vec::new();
+
+        while i + 2 < cards.len() {
+            if Trio::is_trio(&vec![&cards[i], &cards[i + 1], &cards[i + 2]]) {
+                for _ in 0..3 {
+                    result.push(cards.remove(i));
+                }
+                break;
+            } else {
+                i += 1;
+            }
+        }
+
+        result
+    }
 }
