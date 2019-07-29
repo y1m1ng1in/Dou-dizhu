@@ -1,6 +1,7 @@
 #![recursion_limit = "256"]
 
 pub mod cards;
+pub mod player;
 
 use yew::services::ConsoleService;
 use yew::{html, Component, ComponentLink, Html, Renderable, ShouldRender};

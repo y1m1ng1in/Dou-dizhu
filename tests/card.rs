@@ -8,6 +8,7 @@ use doudizhu::cards::pair::Pair;
 use doudizhu::cards::pairchain::PairChain;
 use doudizhu::cards::solochain::SoloChain;
 use doudizhu::cards::trio::Trio;
+use doudizhu::player::computer::Strategy;
 
 #[test]
 fn test_pattern_check() {
@@ -738,4 +739,27 @@ fn bomb_split() {
         assert_eq!(x, r1);
         assert_eq!(cs.to_vec(), r2);
     }
+}
+
+#[test]
+fn strategy_test_1() {
+    let d1 = Card::new(3_u32, Suit::Club, false);
+    let d2 = Card::new(3_u32, Suit::Club, false);
+    let d3 = Card::new(3_u32, Suit::Club, false);
+    let d4 = Card::new(3_u32, Suit::Club, false);
+    let d5 = Card::new(4_u32, Suit::Club, false);
+    let d6 = Card::new(4_u32, Suit::Club, false);
+    let d7 = Card::new(5_u32, Suit::Club, false);
+    let d8 = Card::new(5_u32, Suit::Club, false);
+    let d9 = Card::new(6_u32, Suit::Club, false);
+    let d10 = Card::new(6_u32, Suit::Club, false);
+    let d11 = Card::new(8_u32, Suit::Club, false);
+
+    let mut s = Strategy::new();
+    
+    let mut x = vec![d1,d2,d3,d4,d5,d6,d7,d8,d9,d10,d11]; 
+
+    s.construct(&mut x);
+
+    assert_eq!(x, vec![Card::new(8_u32, Suit::Club, false),]);
 }

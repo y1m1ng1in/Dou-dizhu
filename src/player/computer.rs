@@ -1,12 +1,14 @@
-use doudizhu::cards::card::{Card, Suit};
-use doudizhu::cards::pair::Pair;
-use doudizhu::cards::trio::Trio;
-use doudizhu::cards::solochain::SoloChain;
-use doudizhu::cards::pairchain::PairChain;
-use doudizhu::cards::airplane::Airplane;
-use doudizhu::cards::bomb::{Bomb, Rocket};
+use super::super::cards::airplane::Airplane;
+use super::super::cards::bomb::*;
+use super::super::cards::card::Card;
+use super::super::cards::card::Suit;
+use super::super::cards::pair::Pair;
+use super::super::cards::pairchain::PairChain;
+use super::super::cards::solochain::SoloChain;
+use super::super::cards::trio::Trio;
 
-struct Strategy {
+#[derive(PartialEq, Debug)]
+pub struct Strategy {
     bombs: Vec<Vec<Card>>,
     airplanes: Vec<Vec<Card>>,
     pairchains: Vec<Vec<Card>>,
@@ -16,7 +18,7 @@ struct Strategy {
     solos: Vec<Card>,
 }
 
-struct ComputerPlayer {
+pub struct ComputerPlayer {
     owned_cards: Vec<Card>,
     strategy: Strategy,
 }
@@ -24,10 +26,11 @@ struct ComputerPlayer {
 pub fn split_from_indice(cards: &mut Vec<Card>, indices: &Vec<usize>) -> Vec<Card> {
     let mut shifted: usize = 0;
     let mut result = Vec::new();
+    let mut index: usize;
 
-    for i in &indices {
-        i -= shifted;
-        result.push(cards.remove(i));
+    for i in indices {
+        index = *i - shifted;
+        result.push(cards.remove(index));
         shifted += 1;
     }
 
@@ -47,18 +50,18 @@ impl Strategy {
         }
     }
 
-    pub fn construct(self: &Self, cards: &mut Vec<Card>) {
+    pub fn construct(self: &mut Self, cards: &mut Vec<Card>) {
         let airplanes_and_chains;
 
-        self.bombs = search_bombs_trios_pairs(cards, 1u32);
+        self.bombs = Strategy::search_bombs_trios_pairs(cards, 1u32);
         
-        airplanes_and_chains = search_airplanes_and_chains(cards);
+        airplanes_and_chains = Strategy::search_airplanes_and_chains(cards);
         self.airplanes = airplanes_and_chains.0;
         self.pairchains = airplanes_and_chains.1;
         self.solochains = airplanes_and_chains.2;
 
-        self.trios = search_bombs_trios_pairs(cards, 2u32);
-        self.pairs = search_bombs_trios_pairs(cards, 3u32);
+        self.trios = Strategy::search_bombs_trios_pairs(cards, 2u32);
+        self.pairs = Strategy::search_bombs_trios_pairs(cards, 3u32);
         self.solos = cards.to_vec();
     }
 
@@ -70,14 +73,15 @@ impl Strategy {
         let mut has_more = true;
 
         while has_more {
-            indices = search_longest_from_airplane_or_chain(cards);
+            indices = Strategy::search_longest_from_airplane_or_chain(cards);
             if indices.0.is_empty() {
                 has_more = false;
             } else {
                 match indices.1 {
-                    1 => airplanes.push(split_from_indice(cards, indices.0)),
-                    2 => pairchains.push(split_from_indice(cards, indices.0)),
-                    3 => solochains.push(split_from_indice(cards, indices.0)),
+                    1u32 => airplanes.push(split_from_indice(cards, &indices.0)),
+                    2u32 => pairchains.push(split_from_indice(cards, &indices.0)),
+                    3u32 => solochains.push(split_from_indice(cards, &indices.0)),
+                    _ => (),
                 };
             }
         }
@@ -90,44 +94,49 @@ impl Strategy {
         let pairchain = PairChain::search_longest_cards(cards);
         let solochain = SoloChain::search_longest_cards(cards);
         
-        let airplane_len = match airplane {
-            Some(x) => x.len(),
-            None => 0,
+        let airplane_indices = match airplane {
+            Some(x) => x,
+            None => Vec::new(),
         };
-        let pairchain_len = match pairchain {
-            Some(x) => x.len(),
-            None => 0,
+        let pairchain_indices = match pairchain {
+            Some(x) => x,
+            None => Vec::new(),
         };
-        let solochain_len = match solochain {
-            Some(x) => x.len(),
-            None => 0,
+        let solochain_indices = match solochain {
+            Some(x) => x,
+            None => Vec::new(),
         };
+
+        let airplane_len = airplane_indices.len();
+        let pairchain_len = pairchain_indices.len();
+        let solochain_len = solochain_indices.len(); 
 
         if airplane_len != 0 || pairchain_len != 0 || solochain_len != 0 {
             if airplane_len > pairchain_len && airplane_len > solochain_len {
-                (airplane.unwrap(), 1)
+                (airplane_indices, 1)
             } else if pairchain_len > airplane_len && pairchain_len > solochain_len {
-                (pairchain.unwrap(), 2)
+                (pairchain_indices, 2)
             } else {
-                (solochain.unwrap(), 3)
+                (solochain_indices, 3)
             }
         } else {
             (Vec::new(), 0)
         }
     }   
 
-    fn search_bombs_trios_pairs(cards: &mut Vec<Card>, type: u32) -> Vec<Vec<Card>> {
+    fn search_bombs_trios_pairs(cards: &mut Vec<Card>, pattern: u32) -> Vec<Vec<Card>> {
         let mut has_more = true;
         let mut result: Vec<Vec<Card>> = Vec::new();
         let mut item: Vec<Card>;
 
         while has_more {
-            item = match type {
+            item = match pattern {
                 1 => Bomb::split_from_cards(cards),
                 2 => Trio::split_from_cards(cards),
-                3 => Pair::split_from_cards(cards)
+                3 => Pair::split_from_cards(cards),
+                _ => Vec::new(),
             };
-            if a_trio.is_empty() {
+            if item.is_empty() {
                 has_more = false;
             } else {
                 result.push(item);
@@ -142,7 +151,7 @@ impl ComputerPlayer {
     pub fn new(cards: Vec<Card>) -> ComputerPlayer {
         ComputerPlayer {
             owned_cards: cards,
-            strategy: Strategy::new(cards.clone()),
+            strategy: Strategy::new(),
         }
     }
 }
