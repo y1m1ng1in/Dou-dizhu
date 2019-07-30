@@ -7,7 +7,7 @@ use super::super::cards::pairchain::PairChain;
 use super::super::cards::solochain::SoloChain;
 use super::super::cards::trio::Trio;
 
-#[derive(PartialEq, Debug)]
+#[derive(Debug)]
 pub struct Strategy {
     bombs: Vec<Vec<Card>>,
     airplanes: Vec<Vec<Card>>,
@@ -46,7 +46,7 @@ impl Strategy {
             solochains: Vec::new(),
             trios: Vec::new(),
             pairs: Vec::new(),
-            solos: Vec::new(), 
+            solos: Vec::new(),
         }
     }
 
@@ -54,7 +54,7 @@ impl Strategy {
         let airplanes_and_chains;
 
         self.bombs = Strategy::search_bombs_trios_pairs(cards, 1u32);
-        
+
         airplanes_and_chains = Strategy::search_airplanes_and_chains(cards);
         self.airplanes = airplanes_and_chains.0;
         self.pairchains = airplanes_and_chains.1;
@@ -65,7 +65,9 @@ impl Strategy {
         self.solos = cards.to_vec();
     }
 
-    fn search_airplanes_and_chains(cards: &mut Vec<Card>) -> (Vec<Vec<Card>>, Vec<Vec<Card>>, Vec<Vec<Card>>) {
+    fn search_airplanes_and_chains(
+        cards: &mut Vec<Card>,
+    ) -> (Vec<Vec<Card>>, Vec<Vec<Card>>, Vec<Vec<Card>>) {
         let mut airplanes: Vec<Vec<Card>> = Vec::new();
         let mut pairchains: Vec<Vec<Card>> = Vec::new();
         let mut solochains: Vec<Vec<Card>> = Vec::new();
@@ -93,7 +95,7 @@ impl Strategy {
         let airplane = Airplane::search_longest_cards(cards);
         let pairchain = PairChain::search_longest_cards(cards);
         let solochain = SoloChain::search_longest_cards(cards);
-        
+
         let airplane_indices = match airplane {
             Some(x) => x,
             None => Vec::new(),
@@ -109,7 +111,7 @@ impl Strategy {
 
         let airplane_len = airplane_indices.len();
         let pairchain_len = pairchain_indices.len();
-        let solochain_len = solochain_indices.len(); 
+        let solochain_len = solochain_indices.len();
 
         if airplane_len != 0 || pairchain_len != 0 || solochain_len != 0 {
             if airplane_len > pairchain_len && airplane_len > solochain_len {
@@ -122,7 +124,7 @@ impl Strategy {
         } else {
             (Vec::new(), 0)
         }
-    }   
+    }
 
     fn search_bombs_trios_pairs(cards: &mut Vec<Card>, pattern: u32) -> Vec<Vec<Card>> {
         let mut has_more = true;
@@ -147,6 +149,18 @@ impl Strategy {
     }
 }
 
+impl PartialEq for Strategy {
+    fn eq(&self, other: &Self) -> bool {
+        self.bombs == other.bombs
+            && self.airplanes == other.airplanes
+            && self.pairchains == other.pairchains
+            && self.solochains == other.solochains
+            && self.trios == other.trios
+            && self.pairs == other.pairs
+            && self.solos == other.solos
+    }
+}
+
 impl ComputerPlayer {
     pub fn new(cards: Vec<Card>) -> ComputerPlayer {
         ComputerPlayer {
@@ -156,3 +170,95 @@ impl ComputerPlayer {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use wasm_bindgen_test::wasm_bindgen_test as test;
+
+    use super::super::super::cards::airplane::Airplane;
+    use super::super::super::cards::bomb::*;
+    use super::super::super::cards::card::Card;
+    use super::super::super::cards::card::Suit;
+    use super::super::super::cards::pair::Pair;
+    use super::super::super::cards::pairchain::PairChain;
+    use super::super::super::cards::solochain::SoloChain;
+    use super::super::super::cards::trio::Trio;
+    use super::Strategy;
+
+    fn generate(values: Vec<u32>) -> Vec<Card> {
+        let mut result: Vec<Card> = Vec::new();
+
+        for i in values {
+            result.push(Card::new(i, Suit::Club, false));
+        }
+
+        result
+    }
+
+    #[test]
+    fn strategy_construct_test1() {
+        let mut cards = generate(vec![3, 3, 3, 4, 4, 5, 6, 7, 9, 9, 9]);
+        let mut s = Strategy::new();
+        let x = Strategy {
+            bombs: Vec::new(),
+            airplanes: Vec::new(),
+            pairchains: Vec::new(),
+            solochains: vec![generate(vec![3, 4, 5, 6, 7])],
+            trios: vec![generate(vec![9, 9, 9])],
+            pairs: vec![generate(vec![3, 3])],
+            solos: generate(vec![4]),
+        };
+        s.construct(&mut cards);
+        assert_eq!(s, x);
+    }
+
+    #[test]
+    fn strategy_construct_test2() {
+        let mut cards = generate(vec![3, 3, 3, 4, 4, 5, 5, 6, 7, 9, 12, 12, 12, 12]);
+        let mut s = Strategy::new();
+        let x = Strategy {
+            bombs: vec![generate(vec![12, 12, 12, 12])],
+            airplanes: Vec::new(),
+            pairchains: vec![generate(vec![3, 3, 4, 4, 5, 5])],
+            solochains: Vec::new(),
+            trios: Vec::new(),
+            pairs: Vec::new(),
+            solos: generate(vec![3, 6, 7, 9]),
+        };
+        s.construct(&mut cards);
+        assert_eq!(s, x);
+    }
+
+    #[test]
+    fn strategy_construct_test3() {
+        let mut cards = generate(vec![3,3,3,4,4,4,5,6,7,8,9,10]);
+        let mut s = Strategy::new();
+        let x = Strategy {
+            bombs: Vec::new(),
+            airplanes: Vec::new(),
+            pairchains: Vec::new(),
+            solochains: vec![generate(vec![3,4,5,6,7,8,9,10])],
+            trios: Vec::new(),
+            pairs: vec![generate(vec![3, 3]), generate(vec![4, 4])],
+            solos: Vec::new(),
+        };
+        s.construct(&mut cards);
+        assert_eq!(s, x);
+    }
+
+    #[test]
+    fn strategy_construct_test4() {
+        let mut cards = generate(vec![3,3,4,6,6,7,9,10,11,12,13,13]);
+        let mut s = Strategy::new();
+        let x = Strategy {
+            bombs: Vec::new(),
+            airplanes: Vec::new(),
+            pairchains: Vec::new(),
+            solochains: vec![generate(vec![9,10,11,12,13])],
+            trios: Vec::new(),
+            pairs: vec![generate(vec![3, 3]), generate(vec![6, 6])],
+            solos: generate(vec![4,7,13]),
+        };
+        s.construct(&mut cards);
+        assert_eq!(s, x);
+    }  
+}

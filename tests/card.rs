@@ -756,8 +756,8 @@ fn strategy_test_1() {
     let d11 = Card::new(8_u32, Suit::Club, false);
 
     let mut s = Strategy::new();
-    
-    let mut x = vec![d1,d2,d3,d4,d5,d6,d7,d8,d9,d10,d11]; 
+
+    let mut x = vec![d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11];
 
     s.construct(&mut x);
 
