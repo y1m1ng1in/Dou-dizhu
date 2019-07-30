@@ -147,6 +147,32 @@ impl Strategy {
 
         result
     }
+
+    // XXX maybe pattern(u32) replace by enum 
+    // pattern obtained by last turn handed cards
+    pub fn hand_in_greater(self: &mut Self, greater_than: &Vec<Card>, pattern: u32) -> Vec<Card> {
+        let candidates = match pattern {
+            1 => &mut self.bombs,
+            2 => &mut self.airplanes,
+            3 => &mut self.pairchains,
+            4 => &mut self.solochains,
+            5 => &mut self.trios,
+            6 => &mut self.pairs,
+            7 => &mut vec![self.solos],
+            _ => &mut Vec::new(),
+        };
+        let mut result: Vec<Card> = Vec::new();
+
+        for i in 0..candidates.len() {
+            if candidates[i] > greater_than {   // XXX require Op. overloading
+                result = candidates.to_vec();
+                candidates.remove(i);
+                break;
+            }
+        }
+
+        result
+    }
 }
 
 impl PartialEq for Strategy {
