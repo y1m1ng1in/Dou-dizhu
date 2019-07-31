@@ -5,7 +5,7 @@ pub struct Pair<'a> {
     card2: &'a Card,
 }
 
-pub struct PairSearch<'a>(&'a Vec<Card>);
+pub struct PairSearch<'a>(&'a [Card]);
 
 impl<'a> IntoIterator for PairSearch<'a> {
     type Item = Vec<usize>;
@@ -58,7 +58,7 @@ impl<'a> Pair<'a> {
         }
     }
 
-    pub fn is_pair(cards: &Vec<Card>) -> bool {
+    pub fn is_pair(cards: &[Card]) -> bool {
         if cards.len() != 2 {
             return false;
         }
@@ -73,7 +73,7 @@ impl<'a> Pair<'a> {
         return self.card1.value;
     }
 
-    pub fn search_greater_cards(cards: &Vec<Card>, greater_than: &Vec<Card>) -> Option<Vec<usize>> {
+    pub fn search_greater_cards(cards: &[Card], greater_than: &[Card]) -> Option<Vec<usize>> {
         PairSearch(cards)
             .into_iter()
             .find(|x| cards[x[0]].value > greater_than[0].value)
@@ -95,7 +95,7 @@ impl<'a> Pair<'a> {
     }
 
     // XXX remove pair pattern validation?
-    pub fn compare(c1: &Vec<Card>, c2: &Vec<Card>) -> i32 {
+    pub fn compare(c1: &[Card], c2: &[Card]) -> i32 {
         if Pair::is_pair(c1) && Pair::is_pair(c2) {
             if c1[0].value > c2[0].value {
                 1
@@ -128,7 +128,7 @@ mod tests {
 
     #[test]
     fn search_greater_test1() {
-        let mut cards = generate(vec![3, 3, 3, 4, 4, 5, 6, 7, 9, 9, 9]);
+        let cards = generate(vec![3, 3, 3, 4, 4, 5, 6, 7, 9, 9, 9]);
         let handed_in = &cards[3..5].to_vec();
         let result = Pair::search_greater_cards(&cards, handed_in).unwrap();
         assert_eq!(vec![8, 9], result);
@@ -136,7 +136,7 @@ mod tests {
 
     #[test]
     fn search_greater_test2() {
-        let mut cards = generate(vec![3, 3, 3, 4, 4, 5, 6, 7, 9, 9, 9]);
+        let cards = generate(vec![3, 3, 3, 4, 4, 5, 6, 7, 9, 9, 9]);
         let handed_in = &cards[8..10].to_vec();
         let result = Pair::search_greater_cards(&cards, handed_in);
         assert_eq!(None, result);
@@ -144,7 +144,7 @@ mod tests {
 
     #[test]
     fn search_greater_test3() {
-        let mut cards = generate(vec![]);
+        let cards = generate(vec![]);
         let handed_in = generate(vec![3, 3]);
         let result = Pair::search_greater_cards(&cards, &handed_in);
         assert_eq!(None, result);
@@ -152,7 +152,7 @@ mod tests {
 
     #[test]
     fn search_greater_test4() {
-        let mut cards = generate(vec![3, 4, 5, 6, 7, 7, 8, 9]);
+        let cards = generate(vec![3, 4, 5, 6, 7, 7, 8, 9]);
         let handed_in = generate(vec![4, 4]);
         let result = Pair::search_greater_cards(&cards, &handed_in).unwrap();
         assert_eq!(vec![4, 5], result);
