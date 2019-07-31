@@ -23,7 +23,7 @@ impl<'a> Bomb<'a> {
         }
     }
 
-    pub fn is_bomb(cards: &Vec<&'a Card>) -> bool {
+    pub fn is_bomb(cards: &Vec<Card>) -> bool {
         let val;
 
         if cards.len() != 4 {
@@ -46,12 +46,7 @@ impl<'a> Bomb<'a> {
         let mut result = Vec::new();
 
         while i + 3 < cards.len() {
-            if Bomb::is_bomb(&vec![
-                &cards[i],
-                &cards[i + 1],
-                &cards[i + 2],
-                &cards[i + 3],
-            ]) {
+            if Bomb::is_bomb(&vec![cards[i], cards[i + 1], cards[i + 2], cards[i + 3]]) {
                 if cards[i].value > val {
                     result.push(i);
                     result.push(i + 1);
@@ -78,12 +73,7 @@ impl<'a> Bomb<'a> {
         let mut result = Vec::new();
 
         while i + 3 < cards.len() {
-            if Bomb::is_bomb(&vec![
-                &cards[i],
-                &cards[i + 1],
-                &cards[i + 2],
-                &cards[i + 3],
-            ]) {
+            if Bomb::is_bomb(&vec![cards[i], cards[i + 1], cards[i + 2], cards[i + 3]]) {
                 for _ in 0..4 {
                     result.push(cards.remove(i));
                 }
@@ -95,10 +85,24 @@ impl<'a> Bomb<'a> {
 
         result
     }
+
+    pub fn compare(c1: &Vec<Card>, c2: &Vec<Card>) -> i32 {
+        if (Bomb::is_bomb(c1) || Rocket::is_rocket(c1))
+            && (Bomb::is_bomb(c2) || Rocket::is_rocket(c2))
+        {
+            if c1[0].value > c2[0].value {
+                1
+            } else {
+                0
+            }
+        } else {
+            -1
+        }
+    }
 }
 
 impl<'a> Rocket<'a> {
-    pub fn is_rocket(cards: &Vec<&Card>) -> bool {
+    pub fn is_rocket(cards: &Vec<Card>) -> bool {
         if cards.len() != 2 {
             return false;
         }

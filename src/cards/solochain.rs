@@ -12,7 +12,7 @@ impl<'a> SoloChain<'a> {
     }
 
     // cards' value has already sorted in ascending
-    pub fn is_solo_chain(cards: &Vec<&Card>) -> bool {
+    pub fn is_solo_chain(cards: &Vec<Card>) -> bool {
         let mut previous: u32;
 
         if cards.len() < 5 {
@@ -114,6 +114,18 @@ impl<'a> SoloChain<'a> {
             Some(largest)
         } else {
             None
+        }
+    }
+
+    pub fn compare(c1: &Vec<Card>, c2: &Vec<Card>) -> i32 {
+        if SoloChain::is_solo_chain(c1) && SoloChain::is_solo_chain(c2) {
+            if c1[0].value > c2[0].value {
+                1
+            } else {
+                0
+            }
+        } else {
+            -1
         }
     }
 }

@@ -40,6 +40,14 @@ impl Card {
 
         None
     }
+
+    pub fn compare(c1: &Card, c2: &Card) -> i32 {
+        if c1.value > c2.value {
+            1
+        } else {
+            0
+        }
+    }
 }
 
 impl fmt::Display for Suit {

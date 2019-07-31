@@ -1,11 +1,11 @@
 use super::super::cards::airplane::Airplane;
 use super::super::cards::bomb::*;
 use super::super::cards::card::Card;
-use super::super::cards::card::Suit;
 use super::super::cards::pair::Pair;
 use super::super::cards::pairchain::PairChain;
 use super::super::cards::solochain::SoloChain;
 use super::super::cards::trio::Trio;
+use super::super::cards::utils::*;
 
 #[derive(Debug)]
 pub struct Strategy {
@@ -148,30 +148,50 @@ impl Strategy {
         result
     }
 
-    // XXX maybe pattern(u32) replace by enum 
     // pattern obtained by last turn handed cards
-    pub fn hand_in_greater(self: &mut Self, greater_than: &Vec<Card>, pattern: u32) -> Vec<Card> {
+    pub fn hand_in_greater_from_strategy(
+        self: &mut Self,
+        greater_than: &Vec<Card>,
+        pattern: Pattern,
+    ) -> Vec<Card> {
+        let mut invalid: Vec<Vec<Card>> = Vec::new();
         let candidates = match pattern {
-            1 => &mut self.bombs,
-            2 => &mut self.airplanes,
-            3 => &mut self.pairchains,
-            4 => &mut self.solochains,
-            5 => &mut self.trios,
-            6 => &mut self.pairs,
-            7 => &mut vec![self.solos],
-            _ => &mut Vec::new(),
+            Pattern::Bomb => &mut self.bombs,
+            Pattern::Airplane => &mut self.airplanes,
+            Pattern::PairChain => &mut self.pairchains,
+            Pattern::SoloChain => &mut self.solochains,
+            Pattern::Trio => &mut self.trios,
+            Pattern::Pair => &mut self.pairs,
+            _ => &mut invalid,
         };
         let mut result: Vec<Card> = Vec::new();
 
-        for i in 0..candidates.len() {
-            if candidates[i] > greater_than {   // XXX require Op. overloading
-                result = candidates.to_vec();
-                candidates.remove(i);
-                break;
+        if pattern != Pattern::Solo {
+            for i in 0..candidates.len() {
+                if compare(&candidates[i], greater_than) == 1 {
+                    result = candidates.remove(i).to_vec();
+                    // candidates.remove(i);
+                    break;
+                }
+            }
+        } else {
+            for i in 0..self.solos.len() {
+                if compare(&vec![self.solos[i]], greater_than) == 1 {
+                    result = vec![self.solos.remove(i)];
+                    break;
+                }
             }
         }
-
+        
         result
+    }
+
+    pub fn hand_in_greater_by_merged(
+        self: &mut Self, 
+        greater_than: &Vec<Card>, 
+        pattern: Pattern
+    ) -> Vec<Card> {
+        unimplemented!("merge strategy and then find greater cards.");
     }
 }
 
@@ -200,14 +220,8 @@ impl ComputerPlayer {
 mod tests {
     use wasm_bindgen_test::wasm_bindgen_test as test;
 
-    use super::super::super::cards::airplane::Airplane;
-    use super::super::super::cards::bomb::*;
     use super::super::super::cards::card::Card;
     use super::super::super::cards::card::Suit;
-    use super::super::super::cards::pair::Pair;
-    use super::super::super::cards::pairchain::PairChain;
-    use super::super::super::cards::solochain::SoloChain;
-    use super::super::super::cards::trio::Trio;
     use super::Strategy;
 
     fn generate(values: Vec<u32>) -> Vec<Card> {
@@ -256,13 +270,13 @@ mod tests {
 
     #[test]
     fn strategy_construct_test3() {
-        let mut cards = generate(vec![3,3,3,4,4,4,5,6,7,8,9,10]);
+        let mut cards = generate(vec![3, 3, 3, 4, 4, 4, 5, 6, 7, 8, 9, 10]);
         let mut s = Strategy::new();
         let x = Strategy {
             bombs: Vec::new(),
             airplanes: Vec::new(),
             pairchains: Vec::new(),
-            solochains: vec![generate(vec![3,4,5,6,7,8,9,10])],
+            solochains: vec![generate(vec![3, 4, 5, 6, 7, 8, 9, 10])],
             trios: Vec::new(),
             pairs: vec![generate(vec![3, 3]), generate(vec![4, 4])],
             solos: Vec::new(),
@@ -273,18 +287,18 @@ mod tests {
 
     #[test]
     fn strategy_construct_test4() {
-        let mut cards = generate(vec![3,3,4,6,6,7,9,10,11,12,13,13]);
+        let mut cards = generate(vec![3, 3, 4, 6, 6, 7, 9, 10, 11, 12, 13, 13]);
         let mut s = Strategy::new();
         let x = Strategy {
             bombs: Vec::new(),
             airplanes: Vec::new(),
             pairchains: Vec::new(),
-            solochains: vec![generate(vec![9,10,11,12,13])],
+            solochains: vec![generate(vec![9, 10, 11, 12, 13])],
             trios: Vec::new(),
             pairs: vec![generate(vec![3, 3]), generate(vec![6, 6])],
-            solos: generate(vec![4,7,13]),
+            solos: generate(vec![4, 7, 13]),
         };
         s.construct(&mut cards);
         assert_eq!(s, x);
-    }  
+    }
 }

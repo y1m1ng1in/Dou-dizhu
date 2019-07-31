@@ -5,3 +5,4 @@ pub mod pair;
 pub mod pairchain;
 pub mod solochain;
 pub mod trio;
+pub mod utils;

@@ -15,7 +15,7 @@ impl<'a> Trio<'a> {
         }
     }
 
-    pub fn is_trio(cards: &Vec<&Card>) -> bool {
+    pub fn is_trio(cards: &Vec<Card>) -> bool {
         if cards.len() != 3 {
             return false;
         }
@@ -31,7 +31,7 @@ impl<'a> Trio<'a> {
         let val = greater_than.card1.value;
 
         while i + 2 < cards.len() {
-            if Trio::is_trio(&vec![&cards[i], &cards[i + 1], &cards[i + 2]]) {
+            if Trio::is_trio(&vec![cards[i], cards[i + 1], cards[i + 2]]) {
                 if cards[i].value > val {
                     return Some(vec![i, i + 1, i + 2]);
                 }
@@ -49,7 +49,7 @@ impl<'a> Trio<'a> {
         let mut result = Vec::new();
 
         while i + 2 < cards.len() {
-            if Trio::is_trio(&vec![&cards[i], &cards[i + 1], &cards[i + 2]]) {
+            if Trio::is_trio(&vec![cards[i], cards[i + 1], cards[i + 2]]) {
                 for _ in 0..3 {
                     result.push(cards.remove(i));
                 }
@@ -60,5 +60,17 @@ impl<'a> Trio<'a> {
         }
 
         result
+    }
+
+    pub fn compare(c1: &Vec<Card>, c2: &Vec<Card>) -> i32 {
+        if Trio::is_trio(c1) && Trio::is_trio(c2) {
+            if c1[0].value > c2[0].value {
+                1
+            } else {
+                0
+            }
+        } else {
+            -1
+        }
     }
 }

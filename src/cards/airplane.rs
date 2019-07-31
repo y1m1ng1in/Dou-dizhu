@@ -1,5 +1,4 @@
 use super::card::Card;
-use super::card::Suit;
 use super::pair::Pair;
 use super::trio::Trio;
 
@@ -10,7 +9,7 @@ pub struct Airplane<'a> {
 }
 
 impl<'a> Airplane<'a> {
-    pub fn new(cards: &Vec<&'a Card>) -> Airplane<'a> {
+    /*pub fn new(cards: &Vec<&'a Card>) -> Airplane<'a> {
         let airplane_size = Airplane::find_size(cards);
         let start = airplane_size.0;
         let num = airplane_size.1;
@@ -33,10 +32,32 @@ impl<'a> Airplane<'a> {
             kicker: kickers,
             size: num,
         }
+    }*/
+
+    // generate a vector of cards that in form of airplane
+    pub fn reorder(cards: &Vec<Card>) -> (Vec<Card>, usize) {
+        let airplane_size = Airplane::find_size(cards);
+        let start = airplane_size.0;
+        let trio_num = airplane_size.1;
+        let mut result: Vec<Card> = Vec::new();
+
+        if airplane_size.1 != 0 {
+            for i in start..start + 3 * trio_num {
+                result.push(cards[i].clone());
+            }
+            for i in 0..start {
+                result.push(cards[i].clone());
+            }
+            for i in start + 3 * trio_num..cards.len() {
+                result.push(cards[i].clone());
+            }
+        }
+
+        (result, trio_num)
     }
 
     // cards' value has already sorted in ascending
-    pub fn is_airplane(cards: &Vec<&Card>) -> bool {
+    pub fn is_airplane(cards: &Vec<Card>) -> bool {
         let airplane_size = Airplane::find_size(cards);
 
         if airplane_size.1 == 0 {
@@ -46,7 +67,7 @@ impl<'a> Airplane<'a> {
         }
     }
 
-    fn find_size(cards: &Vec<&'a Card>) -> (usize, usize) {
+    fn find_size(cards: &Vec<Card>) -> (usize, usize) {
         let mut i: usize = 0;
         let mut previous = 0;
         let mut first_trio = true;
@@ -144,7 +165,7 @@ impl<'a> Airplane<'a> {
         while i + 2 < cards.len() {
             if cards[i].value == previous {
                 i += 1;
-            } else if Trio::is_trio(&vec![&cards[i], &cards[i + 1], &cards[i + 2]])
+            } else if Trio::is_trio(&vec![cards[i], cards[i + 1], cards[i + 2]])
                 && cards[i].value == previous + 1
             {
                 previous = cards[i].value;
@@ -162,7 +183,7 @@ impl<'a> Airplane<'a> {
             } else {
                 result = Vec::new();
                 while i + 2 < cards.len() {
-                    if !Trio::is_trio(&vec![&cards[i], &cards[i + 1], &cards[i + 2]]) {
+                    if !Trio::is_trio(&vec![cards[i], cards[i + 1], cards[i + 2]]) {
                         i += 1;
                     } else {
                         previous = cards[i].value;
@@ -211,7 +232,7 @@ impl<'a> Airplane<'a> {
             }
         } else {
             while i + 1 < trio_indices.len() {
-                if Pair::is_pair(&vec![&cards[i], &cards[i + 1]]) {
+                if Pair::is_pair(&vec![cards[i], cards[i + 1]]) {
                     if !trio_indices.contains(&i) && !trio_indices.contains(&(i + 1)) {
                         result.push(i);
                         result.push(i + 1);
@@ -248,7 +269,7 @@ impl<'a> Airplane<'a> {
         while i + 2 < cards.len() {
             if cards[i].value == previous {
                 i += 1;
-            } else if Trio::is_trio(&vec![&cards[i], &cards[i + 1], &cards[i + 2]])
+            } else if Trio::is_trio(&vec![cards[i], cards[i + 1], cards[i + 2]])
                 && cards[i].value == previous + 1
             {
                 previous = cards[i].value;
@@ -264,7 +285,7 @@ impl<'a> Airplane<'a> {
                     current = Vec::new();
                 }
                 while i + 2 < cards.len() {
-                    if !Trio::is_trio(&vec![&cards[i], &cards[i + 1], &cards[i + 2]]) {
+                    if !Trio::is_trio(&vec![cards[i], cards[i + 1], cards[i + 2]]) {
                         i += 1;
                     } else {
                         previous = cards[i].value;
@@ -303,7 +324,7 @@ impl<'a> Airplane<'a> {
         let mut pair_kickers = Vec::new();
 
         while i + 1 < cards.len() {
-            if Pair::is_pair(&vec![&cards[i], &cards[i + 1]]) {
+            if Pair::is_pair(&vec![cards[i], cards[i + 1]]) {
                 if !trio_indices.contains(&i) && !trio_indices.contains(&(i + 1)) {
                     pair_kickers.push(i);
                     pair_kickers.push(i + 1);
@@ -364,6 +385,25 @@ impl<'a> Airplane<'a> {
         } else {
             trio_indices.append(&mut solo_kickers);
             return Some(trio_indices.to_vec());
+        }
+    }
+
+    pub fn compare(c1: &Vec<Card>, c2: &Vec<Card>) -> i32 {
+        if Airplane::is_airplane(c1) && Airplane::is_airplane(c2) {
+            let reformed_c1 = Airplane::reorder(c1);
+            let reformed_c2 = Airplane::reorder(c2);
+
+            if reformed_c1.1 == reformed_c2.1 {
+                if reformed_c1.0[0].value > reformed_c2.0[0].value {
+                    1
+                } else {
+                    0
+                }
+            } else {
+                -1
+            }
+        } else {
+            -1
         }
     }
 }

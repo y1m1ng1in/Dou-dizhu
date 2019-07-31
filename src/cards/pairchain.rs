@@ -18,7 +18,7 @@ impl<'a> PairChain<'a> {
     }
 
     // cards' value has already sorted in ascending
-    pub fn is_pair_chain(cards: &Vec<&Card>) -> bool {
+    pub fn is_pair_chain(cards: &Vec<Card>) -> bool {
         let mut previous: u32;
 
         if cards.len() < 6 || cards.len() % 2 != 0 {
@@ -75,8 +75,7 @@ impl<'a> PairChain<'a> {
         while i + 1 < cards.len() {
             if cards[i].value == previous {
                 i += 1;
-            } else if Pair::is_pair(&vec![&cards[i], &cards[i + 1]])
-                && cards[i].value == previous + 1
+            } else if Pair::is_pair(&vec![cards[i], cards[i + 1]]) && cards[i].value == previous + 1
             {
                 previous = cards[i].value;
                 current_size += 1;
@@ -89,7 +88,7 @@ impl<'a> PairChain<'a> {
             } else {
                 result = Vec::new();
                 while i + 1 < cards.len() {
-                    if !Pair::is_pair(&vec![&cards[i], &cards[i + 1]]) {
+                    if !Pair::is_pair(&vec![cards[i], cards[i + 1]]) {
                         i += 1;
                     } else {
                         previous = cards[i].value;
@@ -119,8 +118,7 @@ impl<'a> PairChain<'a> {
         while i + 1 < cards.len() {
             if cards[i].value == previous {
                 i += 1;
-            } else if Pair::is_pair(&vec![&cards[i], &cards[i + 1]])
-                && cards[i].value == previous + 1
+            } else if Pair::is_pair(&vec![cards[i], cards[i + 1]]) && cards[i].value == previous + 1
             {
                 previous = cards[i].value;
                 current.push(i);
@@ -134,7 +132,7 @@ impl<'a> PairChain<'a> {
                     current = Vec::new();
                 }
                 while i + 1 < cards.len() {
-                    if !Pair::is_pair(&vec![&cards[i], &cards[i + 1]]) {
+                    if !Pair::is_pair(&vec![cards[i], cards[i + 1]]) {
                         i += 1;
                     } else {
                         previous = cards[i].value;
@@ -153,6 +151,18 @@ impl<'a> PairChain<'a> {
             Some(largest)
         } else {
             None
+        }
+    }
+
+    pub fn compare(c1: &Vec<Card>, c2: &Vec<Card>) -> i32 {
+        if PairChain::is_pair_chain(c1) && PairChain::is_pair_chain(c2) {
+            if c1[0].value > c2[0].value {
+                1
+            } else {
+                0
+            }
+        } else {
+            -1
         }
     }
 }

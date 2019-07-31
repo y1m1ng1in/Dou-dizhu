@@ -13,7 +13,7 @@ impl<'a> Pair<'a> {
         }
     }
 
-    pub fn is_pair(cards: &Vec<&Card>) -> bool {
+    pub fn is_pair(cards: &Vec<Card>) -> bool {
         if cards.len() != 2 {
             return false;
         }
@@ -33,7 +33,7 @@ impl<'a> Pair<'a> {
         let val = greater_than.card1.value;
 
         while i + 1 < cards.len() {
-            if Pair::is_pair(&vec![&cards[i], &cards[i + 1]]) {
+            if Pair::is_pair(&vec![cards[i], cards[i + 1]]) {
                 if cards[i].value > val {
                     return Some(vec![i, i + 1]);
                 }
@@ -51,7 +51,7 @@ impl<'a> Pair<'a> {
         let mut result = Vec::new();
 
         while i + 1 < cards.len() {
-            if Pair::is_pair(&vec![&cards[i], &cards[i + 1]]) {
+            if Pair::is_pair(&vec![cards[i], cards[i + 1]]) {
                 for _ in 0..2 {
                     result.push(cards.remove(i));
                 }
@@ -62,5 +62,17 @@ impl<'a> Pair<'a> {
         }
 
         result
+    }
+
+    pub fn compare(c1: &Vec<Card>, c2: &Vec<Card>) -> i32 {
+        if Pair::is_pair(c1) && Pair::is_pair(c2) {
+            if c1[0].value > c2[0].value {
+                1
+            } else {
+                0
+            }
+        } else {
+            -1
+        }
     }
 }
