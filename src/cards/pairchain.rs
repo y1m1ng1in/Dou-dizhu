@@ -155,7 +155,7 @@ impl<'a> PairChain<'a> {
     }
 
     pub fn compare(c1: &Vec<Card>, c2: &Vec<Card>) -> i32 {
-        if PairChain::is_pair_chain(c1) && PairChain::is_pair_chain(c2) {
+        if PairChain::is_pair_chain(c1) && PairChain::is_pair_chain(c2) && c1.len() == c2.len() {
             if c1[0].value > c2[0].value {
                 1
             } else {

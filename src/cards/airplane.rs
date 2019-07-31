@@ -393,7 +393,7 @@ impl<'a> Airplane<'a> {
             let reformed_c1 = Airplane::reorder(c1);
             let reformed_c2 = Airplane::reorder(c2);
 
-            if reformed_c1.1 == reformed_c2.1 {
+            if reformed_c1.1 == reformed_c2.1 && reformed_c1.0.len() == reformed_c2.0.len() {
                 if reformed_c1.0[0].value > reformed_c2.0[0].value {
                     1
                 } else {

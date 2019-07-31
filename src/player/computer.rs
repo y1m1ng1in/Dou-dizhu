@@ -168,28 +168,27 @@ impl Strategy {
 
         if pattern != Pattern::Solo {
             for i in 0..candidates.len() {
-                if compare(&candidates[i], greater_than) == 1 {
+                if compare_known_pattern(&candidates[i], greater_than, pattern) == 1 {
                     result = candidates.remove(i).to_vec();
-                    // candidates.remove(i);
                     break;
                 }
             }
         } else {
             for i in 0..self.solos.len() {
-                if compare(&vec![self.solos[i]], greater_than) == 1 {
+                if compare_known_pattern(&vec![self.solos[i]], greater_than, pattern) == 1 {
                     result = vec![self.solos.remove(i)];
                     break;
                 }
             }
         }
-        
+
         result
     }
 
     pub fn hand_in_greater_by_merged(
-        self: &mut Self, 
-        greater_than: &Vec<Card>, 
-        pattern: Pattern
+        self: &mut Self,
+        greater_than: &Vec<Card>,
+        pattern: Pattern,
     ) -> Vec<Card> {
         unimplemented!("merge strategy and then find greater cards.");
     }
