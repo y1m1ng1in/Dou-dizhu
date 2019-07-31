@@ -73,29 +73,24 @@ impl<'a> Pair<'a> {
         return self.card1.value;
     }
 
-    pub fn search_greater_cards(
-        cards: &Vec<Card>,
-        greater_than: &Vec<Card>,
-    ) -> Option<Vec<usize>> {
-        let val = greater_than[0].value;
-        let iter_cards = PairSearch(cards);
-
-        iter_cards.into_iter().find(|x| cards[x[0]].value > val)
+    pub fn search_greater_cards(cards: &Vec<Card>, greater_than: &Vec<Card>) -> Option<Vec<usize>> {
+        PairSearch(cards)
+            .into_iter()
+            .find(|x| cards[x[0]].value > greater_than[0].value)
     }
 
     pub fn split_from_cards(cards: &mut Vec<Card>) -> Vec<Card> {
         let mut result = Vec::new();
-        let indices = PairSearch(cards).into_iter().nth(0);
 
-        match indices {
+        match PairSearch(cards).into_iter().nth(0) {
             Some(x) => {
                 for _ in 0..2 {
-                    result.push(cards.remove(x[0]));    
+                    result.push(cards.remove(x[0]));
                 }
-            },
+            }
             _ => (),
         }
-        
+
         result
     }
 
