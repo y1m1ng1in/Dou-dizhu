@@ -269,13 +269,13 @@ mod tests {
 
     #[test]
     fn strategy_construct_test3() {
-        let mut cards = generate(vec![3, 3, 3, 4, 4, 4, 5, 6, 7, 8, 9, 10]);
+        let mut cards = generate(vec![3, 3, 3, 4, 4, 4, 5, 6, 7, 8, 9, 10, 11]);
         let mut s = Strategy::new();
         let x = Strategy {
             bombs: Vec::new(),
             airplanes: Vec::new(),
             pairchains: Vec::new(),
-            solochains: vec![generate(vec![3, 4, 5, 6, 7, 8, 9, 10])],
+            solochains: vec![generate(vec![3, 4, 5, 6, 7, 8, 9, 10, 11])],
             trios: Vec::new(),
             pairs: vec![generate(vec![3, 3]), generate(vec![4, 4])],
             solos: Vec::new(),
