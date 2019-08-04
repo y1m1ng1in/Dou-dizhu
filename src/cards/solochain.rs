@@ -37,13 +37,15 @@ impl<'a> Iterator for SoloChainIterator<'a> {
     fn next(&mut self) -> Option<Vec<usize>> {
         let mut result: Vec<usize> = Vec::new();
         let mut start_at = self.index;
+        let mut start_at_moved = false;
 
         if self.index < self.cards.len() {
             while self.index < self.cards.len() {
                 let current = self.cards[self.index].value;
 
-                if self.start_val + 1 == current {
+                if self.start_val + 1 == current && !start_at_moved {
                     start_at = self.index;
+                    start_at_moved = true;
                 }
 
                 if current == self.previous {
@@ -60,6 +62,7 @@ impl<'a> Iterator for SoloChainIterator<'a> {
                     } else {
                         result = Vec::new();
                         result.push(self.index);
+                        start_at_moved = false;
                         self.start_val = current;
                         self.previous = current;
                         self.index += 1;
@@ -230,6 +233,37 @@ mod tests {
         let cards = generate(vec![]);
         let handed_in = generate(vec![5, 6, 7, 8, 9, 10]);
         let result = SoloChain::search_greater_cards(&cards, &handed_in);
+        assert_eq!(None, result);
+    }
+
+    #[test]
+    fn search_greater_test7() {
+        let cards = generate(vec![
+            3, 3, 4, 4, 5, 5, 5, 5, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 9,
+        ]);
+        let handed_in = generate(vec![4,5,6,7,8]);
+        let result = SoloChain::search_greater_cards(&cards, &handed_in).unwrap();
+        assert_eq!(vec![4,8,11,15,18], result);
+    }
+
+    #[test]
+    fn search_longest_test1() {
+        let cards = generate(vec![3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14]);
+        let result = SoloChain::search_longest_cards(&cards).unwrap();
+        assert_eq!(vec![5, 6, 7, 8, 9, 10], result);
+    }
+
+    #[test]
+    fn search_longest_test2() {
+        let cards = generate(vec![3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14]);
+        let result = SoloChain::search_longest_cards(&cards).unwrap();
+        assert_eq!(vec![4, 5, 6, 7, 8, 9, 10], result);
+    }
+
+    #[test]
+    fn search_longest_test3() {
+        let cards = generate(vec![3, 4, 5, 6, 9, 10, 11, 12, 14, 14]);
+        let result = SoloChain::search_longest_cards(&cards);
         assert_eq!(None, result);
     }
 }
