@@ -1,10 +1,6 @@
 use super::card::Card;
 
-pub type Solo<'a> = &'a Card;
-
-pub struct SoloChain<'a> {
-    chain: Vec<Solo<'a>>,
-}
+pub struct SoloChain {}
 
 pub struct SoloChainSearch<'a> {
     cards: &'a [Card],
@@ -82,11 +78,7 @@ impl<'a> Iterator for SoloChainIterator<'a> {
     }
 }
 
-impl<'a> SoloChain<'a> {
-    pub fn new(cards: Vec<&Card>) -> SoloChain {
-        SoloChain { chain: cards }
-    }
-
+impl SoloChain {
     // cards' value has already sorted in ascending
     pub fn is_solo_chain(cards: &[Card]) -> bool {
         let mut prev: u32 = 0;

@@ -1,9 +1,7 @@
 use super::card::Card;
 use super::pair::Pair;
 
-pub struct PairChain<'a> {
-    chain: Vec<Pair<'a>>,
-}
+pub struct PairChain {}
 
 pub struct PairChainSearch<'a> {
     cards: &'a [Card],
@@ -89,18 +87,7 @@ impl<'a> Iterator for PairChainIterator<'a> {
     }
 }
 
-impl<'a> PairChain<'a> {
-    // assume cards pass the pattern matching
-    pub fn new(cards: Vec<&Card>) -> PairChain {
-        let mut result = Vec::new();
-
-        for i in (0..cards.len()).step_by(2) {
-            result.push(Pair::new(cards[i], cards[i + 1]));
-        }
-
-        PairChain { chain: result }
-    }
-
+impl PairChain {
     // cards' value has already sorted in ascending
     pub fn is_pair_chain(cards: &[Card]) -> bool {
         let mut previous: u32 = 0;
@@ -159,7 +146,7 @@ impl<'a> PairChain<'a> {
         }
     }
 
-    pub fn compare(c1: &Vec<Card>, c2: &Vec<Card>) -> i32 {
+    pub fn compare(c1: &[Card], c2: &[Card]) -> i32 {
         if PairChain::is_pair_chain(c1) && PairChain::is_pair_chain(c2) && c1.len() == c2.len() {
             if c1[0].value > c2[0].value {
                 1

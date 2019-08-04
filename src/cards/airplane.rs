@@ -6,7 +6,7 @@ pub struct Airplane {}
 
 impl Airplane {
     // generate a vector of cards that in form of airplane
-    pub fn reorder(cards: &Vec<Card>) -> (Vec<Card>, usize) {
+    pub fn reorder(cards: &[Card]) -> (Vec<Card>, usize) {
         let (start, trio_num) = Airplane::find_size(cards);
         let mut result: Vec<Card> = Vec::new();
 
@@ -26,7 +26,7 @@ impl Airplane {
     }
 
     // cards' value has already sorted in ascending
-    pub fn is_airplane(cards: &Vec<Card>) -> bool {
+    pub fn is_airplane(cards: &[Card]) -> bool {
         Airplane::find_size(cards).1 != 0
     }
 
@@ -214,7 +214,7 @@ impl Airplane {
         }
     }
 
-    pub fn compare(c1: &Vec<Card>, c2: &Vec<Card>) -> i32 {
+    pub fn compare(c1: &[Card], c2: &[Card]) -> i32 {
         if Airplane::is_airplane(c1) && Airplane::is_airplane(c2) {
             let reformed_c1 = Airplane::reorder(c1);
             let reformed_c2 = Airplane::reorder(c2);

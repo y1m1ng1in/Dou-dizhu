@@ -1,10 +1,6 @@
 use super::card::Card;
 
-pub struct Trio<'a> {
-    card1: &'a Card,
-    card2: &'a Card,
-    card3: &'a Card,
-}
+pub struct Trio {}
 
 pub struct TrioSearch<'a>(pub &'a [Card]);
 
@@ -52,24 +48,9 @@ impl<'a> Iterator for TrioIterator<'a> {
     }
 }
 
-impl<'a> Trio<'a> {
-    pub fn new(c1: &'a Card, c2: &'a Card, c3: &'a Card) -> Trio<'a> {
-        Trio {
-            card1: c1,
-            card2: c2,
-            card3: c3,
-        }
-    }
-
+impl Trio {
     pub fn is_trio(cards: &[Card]) -> bool {
-        if cards.len() != 3 {
-            return false;
-        }
-        if cards[0].value == cards[1].value && cards[1].value == cards[2].value {
-            true
-        } else {
-            false
-        }
+        cards.len() == 3 && cards[0].value == cards[1].value && cards[1].value == cards[2].value
     }
 
     pub fn search_greater_cards(cards: &[Card], greater_than: &[Card]) -> Option<Vec<usize>> {

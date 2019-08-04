@@ -1,9 +1,6 @@
 use super::card::Card;
 
-pub struct Pair<'a> {
-    card1: &'a Card,
-    card2: &'a Card,
-}
+pub struct Pair {}
 
 pub struct PairSearch<'a>(pub &'a [Card]);
 
@@ -50,14 +47,7 @@ impl<'a> Iterator for PairIterator<'a> {
     }
 }
 
-impl<'a> Pair<'a> {
-    pub fn new(c1: &'a Card, c2: &'a Card) -> Pair<'a> {
-        Pair {
-            card1: c1,
-            card2: c2,
-        }
-    }
-
+impl Pair {
     pub fn is_pair(cards: &[Card]) -> bool {
         if cards.len() != 2 {
             return false;
@@ -67,10 +57,6 @@ impl<'a> Pair<'a> {
         } else {
             true
         }
-    }
-
-    pub fn value(&self) -> u32 {
-        return self.card1.value;
     }
 
     pub fn search_greater_cards(cards: &[Card], greater_than: &[Card]) -> Option<Vec<usize>> {
