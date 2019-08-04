@@ -6,7 +6,7 @@ pub struct Trio<'a> {
     card3: &'a Card,
 }
 
-pub struct TrioSearch<'a>(&'a [Card]);
+pub struct TrioSearch<'a>(pub &'a [Card]);
 
 impl<'a> IntoIterator for TrioSearch<'a> {
     type Item = Vec<usize>;

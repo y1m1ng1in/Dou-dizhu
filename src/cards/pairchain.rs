@@ -107,7 +107,7 @@ impl<'a> PairChain<'a> {
 
         if cards.len() >= 6 && cards.len() % 2 == 0 {
             for i in (0..cards.len()).step_by(2) {
-                if Pair::is_pair(&cards[i..i+2]) {
+                if Pair::is_pair(&cards[i..i + 2]) {
                     if previous == 0 {
                         previous = cards[i].value;
                     } else {

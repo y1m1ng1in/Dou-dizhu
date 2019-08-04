@@ -241,9 +241,9 @@ mod tests {
         let cards = generate(vec![
             3, 3, 4, 4, 5, 5, 5, 5, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 9,
         ]);
-        let handed_in = generate(vec![4,5,6,7,8]);
+        let handed_in = generate(vec![4, 5, 6, 7, 8]);
         let result = SoloChain::search_greater_cards(&cards, &handed_in).unwrap();
-        assert_eq!(vec![4,8,11,15,18], result);
+        assert_eq!(vec![4, 8, 11, 15, 18], result);
     }
 
     #[test]

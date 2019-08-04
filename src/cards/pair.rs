@@ -5,7 +5,7 @@ pub struct Pair<'a> {
     card2: &'a Card,
 }
 
-pub struct PairSearch<'a>(&'a [Card]);
+pub struct PairSearch<'a>(pub &'a [Card]);
 
 impl<'a> IntoIterator for PairSearch<'a> {
     type Item = Vec<usize>;

@@ -1,47 +1,16 @@
 use super::card::Card;
-use super::pair::Pair;
-use super::trio::Trio;
+use super::pair::PairSearch;
+use super::trio::TrioSearch;
 
-pub struct Airplane<'a> {
-    chain: Vec<&'a Card>,
-    kicker: Vec<&'a Card>,
-    size: usize,
-}
+pub struct Airplane {}
 
-impl<'a> Airplane<'a> {
-    /*pub fn new(cards: &Vec<&'a Card>) -> Airplane<'a> {
-        let airplane_size = Airplane::find_size(cards);
-        let start = airplane_size.0;
-        let num = airplane_size.1;
-        let mut trios: Vec<&Card> = Vec::new();
-        let mut kickers: Vec<&Card> = Vec::new();
-
-        for i in start..start + 3 * num {
-            trios.push(cards[i]);
-        }
-
-        for i in 0..start {
-            kickers.push(cards[i]);
-        }
-        for i in start + 3 * num..cards.len() {
-            kickers.push(cards[i]);
-        }
-
-        Airplane {
-            chain: trios,
-            kicker: kickers,
-            size: num,
-        }
-    }*/
-
+impl Airplane {
     // generate a vector of cards that in form of airplane
     pub fn reorder(cards: &Vec<Card>) -> (Vec<Card>, usize) {
-        let airplane_size = Airplane::find_size(cards);
-        let start = airplane_size.0;
-        let trio_num = airplane_size.1;
+        let (start, trio_num) = Airplane::find_size(cards);
         let mut result: Vec<Card> = Vec::new();
 
-        if airplane_size.1 != 0 {
+        if trio_num != 0 {
             for i in start..start + 3 * trio_num {
                 result.push(cards[i].clone());
             }
@@ -67,324 +36,187 @@ impl<'a> Airplane<'a> {
         }
     }
 
-    fn find_size(cards: &Vec<Card>) -> (usize, usize) {
-        let mut i: usize = 0;
+    fn find_size(cards: &[Card]) -> (usize, usize) {
         let mut previous = 0;
-        let mut first_trio = true;
-        let mut trio_start = 0;
-        let mut max_size = 0;
+        let mut max_size: usize = 0;
         let mut max_size_trio_start = 0;
-        let mut trio_nums = 0;
 
-        if cards.len() < 6 {
-            return (0, 0);
-        }
+        for indices in TrioSearch(cards) {
+            let current = cards[indices[0]].value;
 
-        while i + 2 < cards.len() {
-            if Trio::is_trio(&vec![cards[i], cards[i + 1], cards[i + 2]]) {
-                if first_trio {
-                    trio_start = i;
-                    previous = cards[i].value;
-                    first_trio = false;
-                    trio_nums += 1;
-                } else {
-                    if cards[i].value - previous == 1 {
-                        trio_nums += 1;
-                        previous = cards[i].value;
-                    } else {
-                        if trio_nums > max_size {
-                            max_size = trio_nums;
-                            max_size_trio_start = trio_start;
-                        }
-                        trio_start = i;
-                        previous = cards[i].value;
-                        trio_nums = 1;
-                    }
-                }
-                i += 3;
+            if previous + 1 == current {
+                previous = current;
+                max_size += 1;
             } else {
-                i += 1;
-                if trio_nums > max_size {
-                    max_size = trio_nums;
-                    max_size_trio_start = trio_start;
-                    trio_nums = 0;
-                    first_trio = true;
-                }
+                max_size = 1;
+                max_size_trio_start = indices[0];
+                previous = current;
             }
         }
 
-        if trio_nums > max_size {
-            max_size = trio_nums;
-            max_size_trio_start = trio_start;
-        }
+        (max_size_trio_start, max_size)
+    }
 
-        if max_size == 0 {
-            (0, 0)
+    fn kicker_type(length: usize, size: usize) -> i32 {
+        if length == 3 * size {
+            0
+        } else if length == size + 3 * size {
+            1
+        } else if length == 2 * size + 3 * size {
+            2
         } else {
-            (max_size_trio_start, max_size)
+            -1
         }
     }
 
-    pub fn search_greater_cards(cards: &Vec<Card>, greater_than: &Airplane) -> Option<Vec<usize>> {
-        let pair_kicker: bool;
-        let val = greater_than.chain[0].value;
-        let mut i: usize = 0;
-
-        if greater_than.kicker.len() == greater_than.size * 2 {
-            pair_kicker = true;
-        } else {
-            pair_kicker = false;
-        }
-
-        while i < cards.len() {
-            if cards[i].value <= val {
-                i += 1;
-            } else {
-                break;
-            }
-        }
-
-        Airplane::search_from_pos(cards, greater_than.size, i, pair_kicker)
-    }
-
-    fn search_from_pos(
-        cards: &Vec<Card>,
-        size: usize,
-        start_from: usize,
-        pair_kicker: bool,
-    ) -> Option<Vec<usize>> {
-        let mut i: usize = start_from;
+    pub fn search_greater_cards(cards: &[Card], greater_than: &[Card]) -> Option<Vec<usize>> {
         let mut previous = 0;
         let mut current_size = 0;
         let mut result = Vec::new();
+        let (trio_start, size) = Airplane::find_size(greater_than);
 
-        if start_from >= cards.len() || start_from + 3 * size >= cards.len() {
+        if size < 2 || trio_start >= cards.len() {
             return None;
         }
 
-        while i + 2 < cards.len() {
-            if cards[i].value == previous {
-                i += 1;
-            } else if Trio::is_trio(&vec![cards[i], cards[i + 1], cards[i + 2]])
-                && cards[i].value == previous + 1
-            {
-                previous = cards[i].value;
-                current_size += 1;
+        let val = greater_than[trio_start].value;
+        let kicker = Airplane::kicker_type(greater_than.len(), size);
 
-                result.push(i);
-                result.push(i + 1);
-                result.push(i + 2);
+        for indices in TrioSearch(cards) {
+            let current = cards[indices[0]].value;
 
-                if current_size == size {
-                    break;
-                } else {
-                    i += 3;
-                }
-            } else {
-                result = Vec::new();
-                while i + 2 < cards.len() {
-                    if !Trio::is_trio(&vec![cards[i], cards[i + 1], cards[i + 2]]) {
-                        i += 1;
-                    } else {
-                        previous = cards[i].value;
-                        current_size = 1;
-
-                        result.push(i);
-                        result.push(i + 1);
-                        result.push(i + 2);
-
-                        i += 3;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if current_size != size {
-            return None;
-        }
-
-        Airplane::search_kickers(cards, &mut result, size, pair_kicker)
-    }
-
-    fn search_kickers(
-        cards: &Vec<Card>,
-        trio_indices: &mut Vec<usize>,
-        size: usize,
-        pair_kicker: bool,
-    ) -> Option<Vec<usize>> {
-        let mut result = Vec::new();
-        let mut i: usize = 0;
-        let mut current_size = 0;
-
-        if !pair_kicker {
-            while i < trio_indices.len() {
-                if !trio_indices.contains(&i) {
-                    result.push(i);
+            if current > val {
+                if previous + 1 == current {
+                    previous = current;
+                    result.extend(indices);
                     current_size += 1;
-                    i += 1;
-                } else {
-                    i += 1;
-                }
-                if current_size == size {
-                    break;
-                }
-            }
-        } else {
-            while i + 1 < trio_indices.len() {
-                if Pair::is_pair(&vec![cards[i], cards[i + 1]]) {
-                    if !trio_indices.contains(&i) && !trio_indices.contains(&(i + 1)) {
-                        result.push(i);
-                        result.push(i + 1);
-                        current_size += 1;
-                        i += 2;
-                    } else {
-                        i += 1;
-                    }
                     if current_size == size {
                         break;
                     }
                 } else {
-                    i += 1;
+                    result = Vec::new();
+                    result.extend(indices);
+                    current_size = 1;
+                    previous = current;
                 }
             }
         }
 
         if current_size == size {
-            for j in 0..result.len() {
-                trio_indices.push(result[j]);
+            match kicker {
+                0 => Some(result),
+                1 => Airplane::search_kickers(cards, &mut result, size, false),
+                2 => Airplane::search_kickers(cards, &mut result, size, true),
+                _ => None,
             }
+        } else {
+            None
+        }
+    }
+
+    fn search_kickers(
+        cards: &[Card],
+        trio_indices: &mut Vec<usize>,
+        size: usize,
+        is_pair_kicker: bool,
+    ) -> Option<Vec<usize>> {
+        let mut kickers: Vec<usize> = Vec::new();
+        let mut current_size = 0;
+
+        if !is_pair_kicker {
+            for i in 0..cards.len() {
+                if !trio_indices.contains(&i) {
+                    kickers.push(i);
+                    current_size += 1;
+                }
+                if current_size == size {
+                    break;
+                }
+            }
+        } else {
+            for indices in PairSearch(cards) {
+                if !trio_indices.contains(&indices[0]) && !trio_indices.contains(&indices[1]) {
+                    kickers.push(indices[0]);
+                    kickers.push(indices[1]);
+                    current_size += 1;
+                }
+                if current_size == size {
+                    break;
+                }
+            }
+        }
+
+        if current_size == size {
+            trio_indices.extend(kickers);
             Some(trio_indices.to_vec())
         } else {
             None
         }
     }
 
-    pub fn search_longest_cards(cards: &Vec<Card>) -> Option<Vec<usize>> {
+    pub fn search_longest_cards(cards: &[Card]) -> Option<Vec<usize>> {
         let mut largest = Vec::new();
-        let mut current = Vec::new();
-        let mut i: usize = 0;
+        let mut temp = Vec::new();
         let mut previous: u32 = 0;
 
-        while i + 2 < cards.len() {
-            if cards[i].value == previous {
-                i += 1;
-            } else if Trio::is_trio(&vec![cards[i], cards[i + 1], cards[i + 2]])
-                && cards[i].value == previous + 1
-            {
-                previous = cards[i].value;
-                current.push(i);
-                current.push(i + 1);
-                current.push(i + 2);
-                i += 3;
+        for indices in TrioSearch(cards) {
+            let current = cards[indices[0]].value;
+
+            if previous + 1 == current {
+                previous = current;
+                temp.extend(indices);
             } else {
-                if current.len() > largest.len() {
+                if temp.len() > largest.len() {
                     largest = Vec::new();
-                    largest.append(&mut current);
+                    largest.append(&mut temp);
                 } else {
-                    current = Vec::new();
+                    temp = Vec::new();
                 }
-                while i + 2 < cards.len() {
-                    if !Trio::is_trio(&vec![cards[i], cards[i + 1], cards[i + 2]]) {
-                        i += 1;
-                    } else {
-                        previous = cards[i].value;
-                        current.push(i);
-                        current.push(i + 1);
-                        current.push(i + 2);
-                        i += 3;
-                        break;
-                    }
-                }
+                temp.extend(indices);
+                previous = current;
             }
         }
 
-        let mut size: usize = 0;
-
-        if current.len() > largest.len() && current.len() >= 6 {
+        if temp.len() > largest.len() {
             largest = Vec::new();
-            largest.append(&mut current);
-            size = largest.len() / 3;
-        } else if largest.len() < 6 {
-            return None;
+            largest.append(&mut temp);
         }
 
-        Airplane::search_longest_kickers(cards, &mut largest)
+        if largest.len() >= 6 {
+            Airplane::search_longest_kickers(cards, &mut largest)
+        } else {
+            None
+        }
     }
 
-    fn search_longest_kickers(
-        cards: &Vec<Card>,
-        trio_indices: &mut Vec<usize>,
-    ) -> Option<Vec<usize>> {
+    fn search_longest_kickers(cards: &[Card], trio_indices: &mut Vec<usize>) -> Option<Vec<usize>> {
         let size: usize = trio_indices.len() / 3;
-        let mut i: usize = 0;
-        let mut solo_current = 0;
-        let mut pair_current = 0;
-        let mut solo_kickers = Vec::new();
-        let mut pair_kickers = Vec::new();
+        let mut append_solos = trio_indices.clone();
+        let mut append_pairs = trio_indices.clone();
 
-        while i + 1 < cards.len() {
-            if Pair::is_pair(&vec![cards[i], cards[i + 1]]) {
-                if !trio_indices.contains(&i) && !trio_indices.contains(&(i + 1)) {
-                    pair_kickers.push(i);
-                    pair_kickers.push(i + 1);
-                    pair_current += 1;
-                    if pair_current == size {
-                        break;
+        let p = Airplane::search_kickers(cards, &mut append_pairs, size, true);
+        if p.is_none() {
+            let s = Airplane::search_kickers(cards, &mut append_solos, size, false);
+            if s.is_none() {
+                if size > 2 {
+                    let mut pr = trio_indices.clone();
+                    for _ in 0..3 {
+                        pr.pop();
+                    }
+                    let p_reduced = Airplane::search_kickers(cards, &mut pr, size, true);
+                    if p_reduced.is_some() {
+                        p_reduced
                     } else {
-                        i += 2;
+                        Some(trio_indices.to_vec())
                     }
                 } else {
-                    i += 1;
+                    Some(trio_indices.to_vec())
                 }
             } else {
-                i += 1;
-            }
-        }
-
-        if pair_current < size {
-            i = 0;
-            while i < cards.len() {
-                if !trio_indices.contains(&i) {
-                    solo_kickers.push(i);
-                    solo_current += 1;
-                    if solo_current == size {
-                        break;
-                    } else {
-                        i += 1;
-                    }
-                } else {
-                    i += 1;
-                }
+                s
             }
         } else {
-            trio_indices.append(&mut pair_kickers);
-            return Some(trio_indices.to_vec());
-        }
-
-        if solo_current < 2 && pair_current < 2 {
-            return Some(trio_indices.to_vec());
-        }
-
-        if solo_current < size {
-            if solo_current > pair_current {
-                let reduce = (size - solo_current) * 3;
-                for _i in 0..reduce {
-                    trio_indices.pop();
-                }
-                trio_indices.append(&mut solo_kickers);
-                return Some(trio_indices.to_vec());
-            } else {
-                let reduce = (size - pair_current) * 3;
-                for _i in 0..reduce {
-                    trio_indices.pop();
-                }
-                trio_indices.append(&mut pair_kickers);
-                return Some(trio_indices.to_vec());
-            }
-        } else {
-            trio_indices.append(&mut solo_kickers);
-            return Some(trio_indices.to_vec());
+            p
         }
     }
 
@@ -405,5 +237,80 @@ impl<'a> Airplane<'a> {
         } else {
             -1
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use wasm_bindgen_test::wasm_bindgen_test as test;
+
+    use super::super::card::Card;
+    use super::super::card::Suit;
+    use super::Airplane;
+
+    fn generate(values: Vec<u32>) -> Vec<Card> {
+        let mut result: Vec<Card> = Vec::new();
+
+        for i in values {
+            result.push(Card::new(i, Suit::Club, false));
+        }
+
+        result
+    }
+
+    #[test]
+    fn find_size_test1() {
+        let handed_in = generate(vec![3, 3, 3, 4, 4, 4]);
+        let result = Airplane::find_size(&handed_in);
+        assert_eq!(result.0, 0);
+        assert_eq!(result.1, 2);
+    }
+
+    #[test]
+    fn find_size_test2() {
+        let handed_in = generate(vec![3, 3, 3, 4, 4, 4, 5, 5, 5, 9, 10, 11]);
+        let result = Airplane::find_size(&handed_in);
+        assert_eq!(result.0, 0);
+        assert_eq!(result.1, 3);
+    }
+
+    #[test]
+    fn search_greater_test1() {
+        let cards = generate(vec![4, 4, 4, 5, 5, 5, 6, 6, 7, 7, 9]);
+        let handed_in = generate(vec![3, 3, 3, 4, 4, 4, 5, 5, 6, 6]);
+        let result = Airplane::search_greater_cards(&cards, &handed_in).unwrap();
+        assert_eq!(vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9], result);
+    }
+
+    #[test]
+    fn search_greater_test2() {
+        let cards = generate(vec![5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 9, 10]);
+        let handed_in = generate(vec![3, 3, 3, 4, 4, 4, 5, 5, 5, 9, 10, 11]);
+        let result = Airplane::search_greater_cards(&cards, &handed_in).unwrap();
+        assert_eq!(vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], result);
+    }
+
+    #[test]
+    fn search_greater_test3() {
+        let cards = generate(vec![3, 3, 3, 4, 4, 5, 5, 5, 6, 6, 7, 7, 8, 8]);
+        let handed_in = generate(vec![3, 3, 3, 4, 4, 4, 5, 6]);
+        let result = Airplane::search_greater_cards(&cards, &handed_in);
+        assert_eq!(None, result);
+    }
+
+    #[test]
+    fn search_greater_test4() {
+        let cards = generate(vec![]);
+        let handed_in = generate(vec![4, 4, 4, 5, 5, 5, 6, 6, 7, 7]);
+        let result = Airplane::search_greater_cards(&cards, &handed_in);
+        assert_eq!(None, result);
+    }
+
+    #[test]
+    fn search_greater_test5() {
+        let cards = generate(vec![3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7]);
+        let handed_in = generate(vec![4, 4, 4, 5, 5, 5]);
+        let result = Airplane::search_greater_cards(&cards, &handed_in).unwrap();
+        assert_eq!(vec![6, 7, 8, 10, 11, 12], result);
     }
 }
