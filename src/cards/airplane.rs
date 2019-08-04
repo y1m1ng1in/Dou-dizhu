@@ -27,13 +27,7 @@ impl Airplane {
 
     // cards' value has already sorted in ascending
     pub fn is_airplane(cards: &Vec<Card>) -> bool {
-        let airplane_size = Airplane::find_size(cards);
-
-        if airplane_size.1 == 0 {
-            return false;
-        } else {
-            return true;
-        }
+        Airplane::find_size(cards).1 != 0
     }
 
     fn find_size(cards: &[Card]) -> (usize, usize) {
@@ -203,7 +197,7 @@ impl Airplane {
                     for _ in 0..3 {
                         pr.pop();
                     }
-                    let p_reduced = Airplane::search_kickers(cards, &mut pr, size, true);
+                    let p_reduced = Airplane::search_kickers(cards, &mut pr, size - 1, true);
                     if p_reduced.is_some() {
                         p_reduced
                     } else {
@@ -272,6 +266,23 @@ mod tests {
         let result = Airplane::find_size(&handed_in);
         assert_eq!(result.0, 0);
         assert_eq!(result.1, 3);
+    }
+
+    #[test]
+    fn is_airplane_test() {
+        let c1 = generate(vec![3, 3, 3, 4, 4, 4]);
+        let c2 = generate(vec![3, 3, 3, 4, 4]);
+        let c3 = generate(vec![3, 3, 3, 4, 4, 4, 5, 6]);
+        let c4 = generate(vec![3, 3, 3, 3, 4, 4, 4, 4]);
+        let c5 = generate(vec![3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 7, 8]);
+        let c6 = generate(vec![3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 7, 8]);
+
+        assert_eq!(true, Airplane::is_airplane(&c1));
+        assert_eq!(true, Airplane::is_airplane(&c2));
+        assert_eq!(true, Airplane::is_airplane(&c3));
+        assert_eq!(true, Airplane::is_airplane(&c4));
+        assert_eq!(true, Airplane::is_airplane(&c5));
+        assert_eq!(true, Airplane::is_airplane(&c6));
     }
 
     #[test]
