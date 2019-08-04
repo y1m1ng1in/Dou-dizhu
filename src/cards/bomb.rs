@@ -1,57 +1,23 @@
 use super::card::Card;
 use super::card::Suit;
 
-pub struct Bomb<'a> {
-    card1: &'a Card,
-    card2: &'a Card,
-    card3: &'a Card,
-    card4: &'a Card,
-}
+pub struct Bomb {}
 
-pub struct Rocket<'a> {
-    joker1: &'a Card,
-    joker2: &'a Card,
-}
+pub struct Rocket {}
 
-impl<'a> Bomb<'a> {
-    pub fn new(cards: &Vec<&'a Card>) -> Bomb<'a> {
-        Bomb {
-            card1: cards[0],
-            card2: cards[1],
-            card3: cards[2],
-            card4: cards[3],
-        }
+impl Bomb {
+    pub fn is_bomb(cards: &[Card]) -> bool {
+        cards.iter().max() == cards.iter().min() && cards.len() == 4
     }
 
-    pub fn is_bomb(cards: &Vec<Card>) -> bool {
-        let val;
-
-        if cards.len() != 4 {
-            return false;
-        }
-
-        val = cards[0].value;
-        for card in &cards[1..] {
-            if card.value != val {
-                return false;
-            }
-        }
-
-        true
-    }
-
-    pub fn search_greater_cards(cards: &Vec<Card>, greater_than: &Bomb) -> Option<Vec<usize>> {
+    pub fn search_greater_cards(cards: &[Card], greater_than: &[Card]) -> Option<Vec<usize>> {
         let mut i: usize = 0;
-        let val = greater_than.card1.value;
-        let mut result = Vec::new();
+        let mut result: Vec<usize> = Vec::new();
 
         while i + 3 < cards.len() {
-            if Bomb::is_bomb(&vec![cards[i], cards[i + 1], cards[i + 2], cards[i + 3]]) {
-                if cards[i].value > val {
-                    result.push(i);
-                    result.push(i + 1);
-                    result.push(i + 2);
-                    result.push(i + 3);
+            if Bomb::is_bomb(&cards[i..i+4]) {
+                if cards[i].value > greater_than[0].value {
+                    result = (i..i+4).collect();
                     break;
                 } else {
                     i += 4;
@@ -73,7 +39,7 @@ impl<'a> Bomb<'a> {
         let mut result = Vec::new();
 
         while i + 3 < cards.len() {
-            if Bomb::is_bomb(&vec![cards[i], cards[i + 1], cards[i + 2], cards[i + 3]]) {
+            if Bomb::is_bomb(&cards[i..i+4]) {
                 for _ in 0..4 {
                     result.push(cards.remove(i));
                 }
@@ -101,12 +67,8 @@ impl<'a> Bomb<'a> {
     }
 }
 
-impl<'a> Rocket<'a> {
-    pub fn is_rocket(cards: &Vec<Card>) -> bool {
-        if cards.len() != 2 {
-            return false;
-        }
-
+impl Rocket {
+    pub fn is_rocket(cards: &[Card]) -> bool {
         let type1 = match cards[0].suit {
             Suit::Joker => true,
             _ => false,
@@ -117,10 +79,80 @@ impl<'a> Rocket<'a> {
             _ => false,
         };
 
-        if type1 && type2 {
-            true
-        } else {
-            false
+        type1 && type2 && cards.len() == 2
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use wasm_bindgen_test::wasm_bindgen_test as test;
+
+    use super::super::card::Card;
+    use super::super::card::Suit;
+    use super::Bomb;
+
+    fn generate(values: Vec<u32>) -> Vec<Card> {
+        let mut result: Vec<Card> = Vec::new();
+
+        for i in values {
+            result.push(Card::new(i, Suit::Club, false));
         }
+
+        result
+    }
+
+    #[test]
+    fn is_bomb_test() {
+        let c1 = generate(vec![4,4,4,4]);
+        let c2 = generate(vec![4,4,4,]);
+        let c3 = generate(vec![5,5,5,5,5,5]);
+        let c4 = generate(vec![3,3,3,4]);
+        let c5 = generate(vec![]);
+
+        assert_eq!(Bomb::is_bomb(&c1), true);
+        assert_eq!(Bomb::is_bomb(&c2), false);
+        assert_eq!(Bomb::is_bomb(&c3), false);
+        assert_eq!(Bomb::is_bomb(&c4), false);
+        assert_eq!(Bomb::is_bomb(&c5), false);
+    }
+
+    #[test]
+    fn search_greater_test1() {
+        let cards = generate(vec![3, 3, 3, 4, 4, 4, 4, 7, 8, 9, 9, 9]);
+        let handed_in = generate(vec![3,3,3,3]);
+        let result = Bomb::search_greater_cards(&cards, &handed_in).unwrap();
+        assert_eq!(vec![3,4,5,6], result);
+    }
+
+    #[test]
+    fn search_greater_test2() {
+        let cards = generate(vec![3, 3, 3, 4, 4, 6, 7, 8, 9, 9, 9, 9]);
+        let handed_in = generate(vec![4,4,4,4]);
+        let result = Bomb::search_greater_cards(&cards, &handed_in).unwrap();
+        assert_eq!(vec![8,9,10, 11], result);
+    }
+
+    #[test]
+    fn search_greater_test3() {
+        let cards = generate(vec![3, 3, 3, 4, 4, 6, 7, 8, 9, 9, 9, 11]);
+        let handed_in = generate(vec![6,6,6,6,]);
+        let result = Bomb::search_greater_cards(&cards, &handed_in);
+        assert_eq!(None, result);
+    }
+
+    #[test]
+    fn search_greater_test4() {
+        let cards = generate(vec![3, 4, 5]);
+        let handed_in = generate(vec![6,6,6,6]);
+        let result = Bomb::search_greater_cards(&cards, &handed_in);
+        assert_eq!(None, result);
+    }
+
+    #[test]
+    fn search_greater_test5() {
+        let cards = generate(vec![]);
+        let handed_in = generate(vec![6,6,6,6]);
+        let result = Bomb::search_greater_cards(&cards, &handed_in);
+        assert_eq!(None, result);
     }
 }

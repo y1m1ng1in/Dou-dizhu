@@ -1,4 +1,5 @@
 use std::fmt;
+use std::cmp::Ordering;
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum Suit {
@@ -29,7 +30,7 @@ impl Card {
         println! {"{}", self.value};
     }
 
-    pub fn search_greater_cards(cards: &Vec<Card>, greater_than: &Card) -> Option<usize> {
+    pub fn search_greater_cards(cards: &[Card], greater_than: &Card) -> Option<usize> {
         let val = greater_than.value;
 
         for i in 0..cards.len() {
@@ -67,6 +68,20 @@ impl PartialEq for Card {
         self.value == other.value && self.suit == other.suit && self.selected == other.selected
     }
 }
+
+impl Ord for Card {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.value.cmp(&other.value)
+    }
+}
+
+impl PartialOrd for Card {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Eq for Card {}
 
 impl fmt::Debug for Card {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
