@@ -49,14 +49,7 @@ impl<'a> Iterator for PairIterator<'a> {
 
 impl Pair {
     pub fn is_pair(cards: &[Card]) -> bool {
-        if cards.len() != 2 {
-            return false;
-        }
-        if cards[0].value != cards[1].value {
-            false
-        } else {
-            true
-        }
+        cards.len() == 2 && cards.iter().min() == cards.iter().max()
     }
 
     pub fn search_greater_cards(cards: &[Card], greater_than: &[Card]) -> Option<Vec<usize>> {
