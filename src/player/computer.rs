@@ -168,33 +168,30 @@ mod tests {
 
         result
     }
-    /*
+    
     #[test]
     fn strategy_construct_test1() {
         let mut cards = generate(vec![3, 3, 3, 4, 4, 5, 6, 7, 9, 9, 9]);
         let mut s = Strategy::new();
         let x = Strategy {
             bombs: Vec::new(),
-            airplanes: Vec::new(),
-            pairchains: Vec::new(),
-            solochains: vec![generate(vec![3, 4, 5, 6, 7])],
-            trios: vec![generate(vec![9, 9, 9])],
-            pairs: vec![generate(vec![3, 3])],
+            chains: generate(vec![3, 4, 5, 6, 7]),
+            trios: generate(vec![9, 9, 9]),
+            pairs: generate(vec![3, 3]),
             solos: generate(vec![4]),
         };
         s.construct(&mut cards);
         assert_eq!(s, x);
     }
 
+    
     #[test]
     fn strategy_construct_test2() {
         let mut cards = generate(vec![3, 3, 3, 4, 4, 5, 5, 6, 7, 9, 12, 12, 12, 12]);
         let mut s = Strategy::new();
         let x = Strategy {
-            bombs: vec![generate(vec![12, 12, 12, 12])],
-            airplanes: Vec::new(),
-            pairchains: vec![generate(vec![3, 3, 4, 4, 5, 5])],
-            solochains: Vec::new(),
+            bombs: generate(vec![12, 12, 12, 12]),
+            chains: generate(vec![3, 3, 4, 4, 5, 5]),
             trios: Vec::new(),
             pairs: Vec::new(),
             solos: generate(vec![3, 6, 7, 9]),
@@ -203,18 +200,17 @@ mod tests {
         assert_eq!(s, x);
     }
 
+    
     #[test]
     fn strategy_construct_test3() {
-        let mut cards = generate(vec![3, 3, 3, 4, 4, 4, 5, 6, 7, 8, 9, 10, 11]);
+        let mut cards = generate(vec![3, 3, 3, 4, 4, 4, 5, 6, 8, 8, 11, 11]);
         let mut s = Strategy::new();
         let x = Strategy {
             bombs: Vec::new(),
-            airplanes: Vec::new(),
-            pairchains: Vec::new(),
-            solochains: vec![generate(vec![3, 4, 5, 6, 7, 8, 9, 10, 11])],
+            chains: generate(vec![3, 3, 3, 4, 4, 4, 8, 8, 11, 11]),
             trios: Vec::new(),
-            pairs: vec![generate(vec![3, 3]), generate(vec![4, 4])],
-            solos: Vec::new(),
+            pairs: Vec::new(),
+            solos: generate(vec![5, 6]),
         };
         s.construct(&mut cards);
         assert_eq!(s, x);
@@ -222,19 +218,16 @@ mod tests {
 
     #[test]
     fn strategy_construct_test4() {
-        let mut cards = generate(vec![3, 3, 4, 6, 6, 7, 9, 10, 11, 12, 13, 13]);
+        let mut cards = generate(vec![3, 3, 4, 4, 5, 5, 7, 9, 10, 11, 12, 13, 13]);
         let mut s = Strategy::new();
         let x = Strategy {
             bombs: Vec::new(),
-            airplanes: Vec::new(),
-            pairchains: Vec::new(),
-            solochains: vec![generate(vec![9, 10, 11, 12, 13])],
+            chains: generate(vec![3,3,4,4,5,5,9,10,11,12,13]),
             trios: Vec::new(),
-            pairs: vec![generate(vec![3, 3]), generate(vec![6, 6])],
-            solos: generate(vec![4, 7, 13]),
+            pairs: Vec::new(),
+            solos: generate(vec![7, 13]),
         };
         s.construct(&mut cards);
         assert_eq!(s, x);
     }
-    */
 }
