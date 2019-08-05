@@ -120,7 +120,46 @@ impl Strategy {
         greater_than: &[Card],
         pattern: Pattern,
     ) -> Vec<Card> {
-        unimplemented!("hand in greater cards from strategy.");
+        let indices;
+
+        match pattern {
+            Pattern::Bomb => {
+                indices =
+                    Bomb::search_greater_cards(&self.bombs, greater_than).unwrap_or(Vec::new());
+                split_from_indice(&mut self.bombs, &indices)
+            }
+            Pattern::Airplane => {
+                indices = Airplane::search_greater_cards(&self.chains, greater_than)
+                    .unwrap_or(Vec::new());
+                split_from_indice(&mut self.chains, &indices)
+            }
+            Pattern::SoloChain => {
+                indices = SoloChain::search_greater_cards(&self.chains, greater_than)
+                    .unwrap_or(Vec::new());
+                split_from_indice(&mut self.chains, &indices)
+            }
+            Pattern::PairChain => {
+                indices = PairChain::search_greater_cards(&self.chains, greater_than)
+                    .unwrap_or(Vec::new());
+                split_from_indice(&mut self.chains, &indices)
+            }
+            Pattern::Trio => {
+                indices =
+                    Trio::search_greater_cards(&self.trios, greater_than).unwrap_or(Vec::new());
+                split_from_indice(&mut self.trios, &indices)
+            }
+            Pattern::Pair => {
+                indices =
+                    Pair::search_greater_cards(&self.pairs, greater_than).unwrap_or(Vec::new());
+                split_from_indice(&mut self.pairs, &indices)
+            }
+            Pattern::Solo => {
+                indices =
+                    Card::search_greater_cards(&self.solos, greater_than).unwrap_or(Vec::new());
+                split_from_indice(&mut self.solos, &indices)
+            }
+            Pattern::Invalid => Vec::new(),
+        }
     }
 
     pub fn hand_in_greater_by_merged(
@@ -128,7 +167,60 @@ impl Strategy {
         greater_than: &[Card],
         pattern: Pattern,
     ) -> Vec<Card> {
-        unimplemented!("merge strategy and then find greater cards.");
+        let mut all_cards = Vec::new();
+        let indices;
+        let removed;
+
+        all_cards.append(&mut self.bombs);
+        all_cards.append(&mut self.chains);
+        all_cards.append(&mut self.trios);
+        all_cards.append(&mut self.pairs);
+        all_cards.append(&mut self.solos);
+
+        match pattern {
+            Pattern::Bomb => {
+                indices =
+                    Bomb::search_greater_cards(&all_cards, greater_than).unwrap_or(Vec::new());
+                removed = split_from_indice(&mut all_cards, &indices);
+            }
+            Pattern::Airplane => {
+                indices =
+                    Airplane::search_greater_cards(&all_cards, greater_than).unwrap_or(Vec::new());
+                removed = split_from_indice(&mut all_cards, &indices);
+            }
+            Pattern::SoloChain => {
+                indices =
+                    SoloChain::search_greater_cards(&all_cards, greater_than).unwrap_or(Vec::new());
+                removed = split_from_indice(&mut all_cards, &indices);
+            }
+            Pattern::PairChain => {
+                indices =
+                    PairChain::search_greater_cards(&all_cards, greater_than).unwrap_or(Vec::new());
+                removed = split_from_indice(&mut all_cards, &indices);
+            }
+            Pattern::Trio => {
+                indices =
+                    Trio::search_greater_cards(&all_cards, greater_than).unwrap_or(Vec::new());
+                removed = split_from_indice(&mut all_cards, &indices);
+            }
+            Pattern::Pair => {
+                indices =
+                    Pair::search_greater_cards(&all_cards, greater_than).unwrap_or(Vec::new());
+                removed = split_from_indice(&mut all_cards, &indices);
+            }
+            Pattern::Solo => {
+                indices =
+                    Card::search_greater_cards(&all_cards, greater_than).unwrap_or(Vec::new());
+                removed = split_from_indice(&mut all_cards, &indices);
+            }
+            Pattern::Invalid => {
+                removed = Vec::new();
+            }
+        };
+
+        self.construct(&mut all_cards);
+        
+        removed
     }
 }
 
@@ -168,7 +260,7 @@ mod tests {
 
         result
     }
-    
+
     #[test]
     fn strategy_construct_test1() {
         let mut cards = generate(vec![3, 3, 3, 4, 4, 5, 6, 7, 9, 9, 9]);
@@ -184,7 +276,6 @@ mod tests {
         assert_eq!(s, x);
     }
 
-    
     #[test]
     fn strategy_construct_test2() {
         let mut cards = generate(vec![3, 3, 3, 4, 4, 5, 5, 6, 7, 9, 12, 12, 12, 12]);
@@ -200,7 +291,6 @@ mod tests {
         assert_eq!(s, x);
     }
 
-    
     #[test]
     fn strategy_construct_test3() {
         let mut cards = generate(vec![3, 3, 3, 4, 4, 4, 5, 6, 8, 8, 11, 11]);
@@ -222,7 +312,7 @@ mod tests {
         let mut s = Strategy::new();
         let x = Strategy {
             bombs: Vec::new(),
-            chains: generate(vec![3,3,4,4,5,5,9,10,11,12,13]),
+            chains: generate(vec![3, 3, 4, 4, 5, 5, 9, 10, 11, 12, 13]),
             trios: Vec::new(),
             pairs: Vec::new(),
             solos: generate(vec![7, 13]),

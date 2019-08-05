@@ -1,5 +1,5 @@
-use std::fmt;
 use std::cmp::Ordering;
+use std::fmt;
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum Suit {
@@ -30,16 +30,17 @@ impl Card {
         println! {"{}", self.value};
     }
 
-    pub fn search_greater_cards(cards: &[Card], greater_than: &Card) -> Option<usize> {
-        let val = greater_than.value;
-
-        for i in 0..cards.len() {
-            if cards[i].value > val {
-                return Some(i);
+    pub fn search_greater_cards(cards: &[Card], greater_than: &[Card]) -> Option<Vec<usize>> {
+        if greater_than.len() == 1 {
+            for i in 0..cards.len() {
+                if cards[i].value > greater_than[0].value {
+                    return Some(vec![i]);
+                }
             }
+            None
+        } else {
+            None
         }
-
-        None
     }
 
     pub fn compare(c1: &Card, c2: &Card) -> i32 {
