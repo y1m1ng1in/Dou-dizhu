@@ -97,7 +97,7 @@ impl Strategy {
 
         if airplane_len != 0 || pairchain_len != 0 || solochain_len != 0 {
             if airplane_len > pairchain_len && airplane_len > solochain_len {
-                airplane.sort_unstable(); 
+                airplane.sort_unstable();
                 Some(airplane)
             } else if pairchain_len > airplane_len && pairchain_len > solochain_len {
                 Some(pairchain)
@@ -398,31 +398,78 @@ mod tests {
     fn hand_in_from_strategy_test3() {
         let mut x = Strategy {
             bombs: Vec::new(),
-            chains: generate(vec![5,6,7,8,9,10]),
+            chains: generate(vec![5, 6, 7, 8, 9, 10]),
             trios: Vec::new(),
-            pairs: generate(vec![3,3,10,10]),
-            solos: generate(vec![7,8]),
+            pairs: generate(vec![3, 3, 10, 10]),
+            solos: generate(vec![7, 8]),
         };
-        let r = x.hand_in_greater_from_strategy(&generate(vec![6,7,8,9,10]), Pattern::SoloChain);
+        let r =
+            x.hand_in_greater_from_strategy(&generate(vec![6, 7, 8, 9, 10]), Pattern::SoloChain);
         let y = Strategy {
             bombs: Vec::new(),
-            chains: generate(vec![5,6,7,8,9,10]),
+            chains: generate(vec![5, 6, 7, 8, 9, 10]),
             trios: Vec::new(),
-            pairs: generate(vec![3,3,10,10]),
-            solos: generate(vec![7,8]),
+            pairs: generate(vec![3, 3, 10, 10]),
+            solos: generate(vec![7, 8]),
         };
         assert_eq!(x, y);
         assert_eq!(r, generate(vec![]));
 
-        let r1 = x.hand_in_greater_from_strategy(&generate(vec![5,6,7,8,9]), Pattern::SoloChain);
+        let r1 =
+            x.hand_in_greater_from_strategy(&generate(vec![5, 6, 7, 8, 9]), Pattern::SoloChain);
         let z = Strategy {
             bombs: Vec::new(),
             chains: generate(vec![5]),
             trios: Vec::new(),
-            pairs: generate(vec![3,3,10,10]),
-            solos: generate(vec![7,8]),
+            pairs: generate(vec![3, 3, 10, 10]),
+            solos: generate(vec![7, 8]),
         };
         assert_eq!(x, z);
-        assert_eq!(r1, generate(vec![6,7,8,9,10]));
+        assert_eq!(r1, generate(vec![6, 7, 8, 9, 10]));
+    }
+
+    #[test]
+    fn hand_in_merged_test1() {
+        let mut x = Strategy {
+            bombs: Vec::new(),
+            chains: generate(vec![7, 7, 8, 8, 9, 9]),
+            trios: Vec::new(),
+            pairs: generate(vec![3, 3, 13, 13]),
+            solos: generate(vec![6, 10]),
+        };
+        let r = x.hand_in_greater_by_merged(&generate(vec![5, 6, 7, 8, 9]), Pattern::SoloChain);
+        let y = Strategy {
+            bombs: Vec::new(),
+            chains: Vec::new(),
+            trios: Vec::new(),
+            pairs: generate(vec![3, 3, 13, 13]),
+            solos: generate(vec![7, 8, 9]),
+        };
+        assert_eq!(x, y);
+        assert_eq!(r, generate(vec![6, 7, 8, 9, 10]));
+
+        let r1 =
+            x.hand_in_greater_by_merged(&generate(vec![9, 10, 11, 12, 13]), Pattern::SoloChain);
+        let z = Strategy {
+            bombs: Vec::new(),
+            chains: Vec::new(),
+            trios: Vec::new(),
+            pairs: generate(vec![3, 3, 13, 13]),
+            solos: generate(vec![7, 8, 9]),
+        };
+        assert_eq!(x, z);
+        assert_eq!(r1, generate(vec![]));
+
+        let r2 =
+            x.hand_in_greater_by_merged(&generate(vec![10]), Pattern::Solo); 
+        let z1 = Strategy {
+            bombs: Vec::new(),
+            chains: Vec::new(),
+            trios: Vec::new(),
+            pairs: generate(vec![3, 3]),
+            solos: generate(vec![7, 8, 9, 13]),
+        };
+        assert_eq!(x, z1);
+        assert_eq!(r2, generate(vec![13])); 
     }
 }
