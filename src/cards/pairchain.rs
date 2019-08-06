@@ -115,13 +115,17 @@ impl PairChain {
     }
 
     pub fn search_greater_cards(cards: &[Card], greater_than: &[Card]) -> Option<Vec<usize>> {
-        let indices = PairChainSearch { cards: cards }
-            .into_iter()
-            .find(|x| cards[x[0]].value > greater_than[0].value && x.len() >= greater_than.len());
+        if !greater_than.is_empty() {
+            let indices = PairChainSearch { cards: cards }.into_iter().find(|x| {
+                cards[x[0]].value > greater_than[0].value && x.len() >= greater_than.len()
+            });
 
-        match indices {
-            Some(i) => Some(i[..greater_than.len()].to_vec()),
-            _ => None,
+            match indices {
+                Some(i) => Some(i[..greater_than.len()].to_vec()),
+                _ => None,
+            }
+        } else {
+            None
         }
     }
 

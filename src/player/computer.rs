@@ -2,9 +2,11 @@ use super::super::cards::airplane::Airplane;
 use super::super::cards::bomb::*;
 use super::super::cards::card::Card;
 use super::super::cards::pair::Pair;
+use super::super::cards::pair::PairSearch;
 use super::super::cards::pairchain::PairChain;
 use super::super::cards::solochain::SoloChain;
 use super::super::cards::trio::Trio;
+use super::super::cards::trio::TrioSearch;
 use super::super::cards::utils::*;
 
 #[derive(Debug)]
@@ -17,7 +19,6 @@ pub struct Strategy {
 }
 
 pub struct ComputerPlayer {
-    owned_cards: Vec<Card>,
     strategy: Strategy,
 }
 
@@ -74,7 +75,7 @@ impl Strategy {
         let mut chains: Vec<Card> = Vec::new();
 
         while has_more {
-            indices = Strategy::search_longest_chain(cards);
+            indices = Strategy::search_longest_chain(cards).0;
             match indices {
                 Some(i) => chains.extend(split_from_indice(cards, &i)),
                 None => has_more = false,
@@ -86,7 +87,7 @@ impl Strategy {
         chains
     }
 
-    fn search_longest_chain(cards: &[Card]) -> Option<Vec<usize>> {
+    fn search_longest_chain(cards: &[Card]) -> (Option<Vec<usize>>, Pattern) {
         let mut airplane = Airplane::search_longest_cards(cards).unwrap_or(Vec::new());
         let pairchain = PairChain::search_longest_cards(cards).unwrap_or(Vec::new());
         let solochain = SoloChain::search_longest_cards(cards).unwrap_or(Vec::new());
@@ -98,14 +99,14 @@ impl Strategy {
         if airplane_len != 0 || pairchain_len != 0 || solochain_len != 0 {
             if airplane_len > pairchain_len && airplane_len > solochain_len {
                 airplane.sort_unstable();
-                Some(airplane)
+                (Some(airplane), Pattern::Airplane)
             } else if pairchain_len > airplane_len && pairchain_len > solochain_len {
-                Some(pairchain)
+                (Some(pairchain), Pattern::PairChain)
             } else {
-                Some(solochain)
+                (Some(solochain), Pattern::SoloChain)
             }
         } else {
-            None
+            (None, Pattern::Invalid)
         }
     }
 
@@ -241,6 +242,129 @@ impl Strategy {
 
         removed
     }
+
+    // search player's largest card for each pattern and hand in
+    pub fn hand_in_first(self: &mut Self, player: &[Card]) -> Vec<Card> {
+        let mut no_greater = false;
+        let mut removed: Vec<Card> = self.hand_in_first_from_chain(player);
+
+        if removed.is_empty() {
+            removed = self.hand_in_first_from_other(player, Pattern::Trio);
+            if removed.is_empty() {
+                removed = self.hand_in_first_from_other(player, Pattern::Pair);
+                if removed.is_empty() {
+                    removed = self.hand_in_first_from_other(player, Pattern::Solo);
+                    if removed.is_empty() {
+                        no_greater = true;
+                    }
+                }
+            }
+        }
+
+        if no_greater {
+            let indices = Strategy::search_longest_chain(&self.chains).0;
+            match indices {
+                Some(i) => split_from_indice(&mut self.chains, &i),
+                None => {
+                    removed = Trio::split_from_cards(&mut self.trios);
+                    if removed.is_empty() {
+                        removed = Pair::split_from_cards(&mut self.pairs);
+                        if removed.is_empty() {
+                            if !self.solos.is_empty() {
+                                removed = vec![self.solos.remove(0)];
+                            } else {
+                                removed = Bomb::split_from_cards(&mut self.bombs);
+                            }
+                        }
+                    }
+                    removed
+                }
+            }
+        } else {
+            removed
+        }
+    }
+
+    fn hand_in_first_from_chain(self: &mut Self, player: &[Card]) -> Vec<Card> {
+        let (indices, pattern) = Strategy::search_longest_chain(&self.chains);
+        let chain_indices = indices.unwrap_or(Vec::new());
+        let candidate = Strategy::clone_cards_from_indices(&chain_indices, &self.chains);
+        let has_greater: Option<Vec<usize>>;
+
+        if !candidate.is_empty() {
+            has_greater = match pattern {
+                Pattern::Airplane => Airplane::search_greater_cards(player, &candidate),
+                Pattern::PairChain => PairChain::search_greater_cards(player, &candidate),
+                Pattern::SoloChain => SoloChain::search_greater_cards(player, &candidate),
+                _ => None,
+            };
+            if has_greater.is_none() {
+                split_from_indice(&mut self.chains, &chain_indices)
+            } else {
+                Vec::new()
+            }
+        } else {
+            Vec::new()
+        }
+    }
+
+    fn hand_in_first_from_other(self: &mut Self, player: &[Card], pattern: Pattern) -> Vec<Card> {
+        let indices;
+        let candidate: Vec<Card>;
+
+        match pattern {
+            Pattern::Trio => {
+                indices = TrioSearch(&self.trios)
+                    .into_iter()
+                    .last()
+                    .unwrap_or(Vec::new());
+                candidate = Strategy::clone_cards_from_indices(&indices, &self.trios);
+                if Trio::search_greater_cards(player, &candidate).is_none() {
+                    split_from_indice(&mut self.trios, &indices)
+                } else {
+                    vec![]
+                }
+            }
+            Pattern::Pair => {
+                indices = PairSearch(&self.pairs)
+                    .into_iter()
+                    .last()
+                    .unwrap_or(Vec::new());
+                candidate = Strategy::clone_cards_from_indices(&indices, &self.pairs);
+                if Pair::search_greater_cards(player, &candidate).is_none() {
+                    split_from_indice(&mut self.pairs, &indices)
+                } else {
+                    vec![]
+                }
+            }
+            Pattern::Solo => {
+                if !self.solos.is_empty() {
+                    indices = vec![self.solos.len() - 1];
+                    candidate = Strategy::clone_cards_from_indices(&indices, &self.solos);
+                    if Card::search_greater_cards(player, &candidate).is_none() {
+                        split_from_indice(&mut self.solos, &indices)
+                    } else {
+                        vec![]
+                    }
+                } else {
+                    vec![]
+                }
+            }
+            _ => vec![],
+        }
+    }
+
+    fn clone_cards_from_indices(indices: &[usize], cards: &[Card]) -> Vec<Card> {
+        let mut result = Vec::new();
+
+        if indices.iter().max().unwrap_or(&cards.len()) < &cards.len() {
+            for i in indices {
+                result.push(cards[*i].clone());
+            }
+        }
+
+        result
+    }
 }
 
 impl PartialEq for Strategy {
@@ -256,7 +380,6 @@ impl PartialEq for Strategy {
 impl ComputerPlayer {
     pub fn new(cards: Vec<Card>) -> ComputerPlayer {
         ComputerPlayer {
-            owned_cards: cards,
             strategy: Strategy::new(),
         }
     }
@@ -460,8 +583,7 @@ mod tests {
         assert_eq!(x, z);
         assert_eq!(r1, generate(vec![]));
 
-        let r2 =
-            x.hand_in_greater_by_merged(&generate(vec![10]), Pattern::Solo); 
+        let r2 = x.hand_in_greater_by_merged(&generate(vec![10]), Pattern::Solo);
         let z1 = Strategy {
             bombs: Vec::new(),
             chains: Vec::new(),
@@ -470,6 +592,72 @@ mod tests {
             solos: generate(vec![7, 8, 9, 13]),
         };
         assert_eq!(x, z1);
-        assert_eq!(r2, generate(vec![13])); 
+        assert_eq!(r2, generate(vec![13]));
+    }
+
+    #[test]
+    fn hand_in_first_test1() {
+        let p = generate(vec![3, 3, 4, 4, 7, 9, 12, 13, 13]);
+        let mut x = Strategy {
+            bombs: Vec::new(),
+            chains: generate(vec![3, 4, 5, 6, 7, 8]),
+            trios: Vec::new(),
+            pairs: generate(vec![3, 3, 5, 5]),
+            solos: generate(vec![7, 8, 9, 11]),
+        };
+        let y = Strategy {
+            bombs: Vec::new(),
+            chains: Vec::new(),
+            trios: Vec::new(),
+            pairs: generate(vec![3, 3, 5, 5]),
+            solos: generate(vec![7, 8, 9, 11]),
+        };
+        let h = x.hand_in_first(&p);
+        assert_eq!(h, generate(vec![3, 4, 5, 6, 7, 8]));
+        assert_eq!(x, y);
+    }
+
+    #[test]
+    fn hand_in_first_test2() {
+        let p = generate(vec![3, 3, 4, 4, 7, 9, 12, 13, 13]);
+        let mut x = Strategy {
+            bombs: Vec::new(),
+            chains: Vec::new(),
+            trios: Vec::new(),
+            pairs: generate(vec![3, 3, 5, 5]),
+            solos: generate(vec![7, 8, 9, 11]),
+        };
+        let y = Strategy {
+            bombs: Vec::new(),
+            chains: Vec::new(),
+            trios: Vec::new(),
+            pairs: generate(vec![5, 5]),
+            solos: generate(vec![7, 8, 9, 11]),
+        };
+        let h = x.hand_in_first(&p);
+        assert_eq!(h, generate(vec![3, 3]));
+        assert_eq!(x, y);
+    }
+
+    #[test]
+    fn hand_in_first_test3() {
+        let p = generate(vec![3, 3, 4, 4, 7, 9, 12]);
+        let mut x = Strategy {
+            bombs: generate(vec![5, 5, 5, 5]),
+            chains: Vec::new(),
+            trios: Vec::new(),
+            pairs: Vec::new(),
+            solos: generate(vec![7, 8, 9, 11]),
+        };
+        let y = Strategy {
+            bombs: generate(vec![5, 5, 5, 5]),
+            chains: Vec::new(),
+            trios: Vec::new(),
+            pairs: Vec::new(),
+            solos: generate(vec![8, 9, 11]),
+        };
+        let h = x.hand_in_first(&p);
+        assert_eq!(h, generate(vec![7]));
+        assert_eq!(x, y);
     }
 }

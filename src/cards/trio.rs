@@ -54,9 +54,13 @@ impl Trio {
     }
 
     pub fn search_greater_cards(cards: &[Card], greater_than: &[Card]) -> Option<Vec<usize>> {
-        TrioSearch(cards)
-            .into_iter()
-            .find(|x| cards[x[0]].value > greater_than[0].value)
+        if !greater_than.is_empty() {
+            TrioSearch(cards)
+                .into_iter()
+                .find(|x| cards[x[0]].value > greater_than[0].value)
+        } else {
+            None
+        }
     }
 
     pub fn split_from_cards(cards: &mut Vec<Card>) -> Vec<Card> {
