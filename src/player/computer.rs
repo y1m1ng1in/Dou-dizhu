@@ -311,6 +311,7 @@ impl Strategy {
     fn hand_in_first_from_other(self: &mut Self, player: &[Card], pattern: Pattern) -> Vec<Card> {
         let indices;
         let candidate: Vec<Card>;
+        let smallest;
 
         match pattern {
             Pattern::Trio => {
@@ -318,9 +319,13 @@ impl Strategy {
                     .into_iter()
                     .last()
                     .unwrap_or(Vec::new());
+                smallest = TrioSearch(&self.trios)
+                    .into_iter()
+                    .nth(0)
+                    .unwrap_or(Vec::new());
                 candidate = Strategy::clone_cards_from_indices(&indices, &self.trios);
                 if Trio::search_greater_cards(player, &candidate).is_none() {
-                    split_from_indice(&mut self.trios, &indices)
+                    split_from_indice(&mut self.trios, &smallest)
                 } else {
                     vec![]
                 }
@@ -330,9 +335,13 @@ impl Strategy {
                     .into_iter()
                     .last()
                     .unwrap_or(Vec::new());
+                smallest = PairSearch(&self.pairs)
+                    .into_iter()
+                    .nth(0)
+                    .unwrap_or(Vec::new());
                 candidate = Strategy::clone_cards_from_indices(&indices, &self.pairs);
                 if Pair::search_greater_cards(player, &candidate).is_none() {
-                    split_from_indice(&mut self.pairs, &indices)
+                    split_from_indice(&mut self.pairs, &smallest)
                 } else {
                     vec![]
                 }
@@ -342,7 +351,7 @@ impl Strategy {
                     indices = vec![self.solos.len() - 1];
                     candidate = Strategy::clone_cards_from_indices(&indices, &self.solos);
                     if Card::search_greater_cards(player, &candidate).is_none() {
-                        split_from_indice(&mut self.solos, &indices)
+                        split_from_indice(&mut self.solos, &vec![0])
                     } else {
                         vec![]
                     }
@@ -597,10 +606,10 @@ mod tests {
 
     #[test]
     fn hand_in_first_test1() {
-        let p = generate(vec![3, 3, 4, 4, 7, 9, 12, 13, 13]);
+        let p = generate(vec![3,3,4,8,8,9,9,10,10,13,14]);
         let mut x = Strategy {
             bombs: Vec::new(),
-            chains: generate(vec![3, 4, 5, 6, 7, 8]),
+            chains: generate(vec![4,4,5,5,6,6,7,7]),
             trios: Vec::new(),
             pairs: generate(vec![3, 3, 5, 5]),
             solos: generate(vec![7, 8, 9, 11]),
@@ -613,25 +622,25 @@ mod tests {
             solos: generate(vec![7, 8, 9, 11]),
         };
         let h = x.hand_in_first(&p);
-        assert_eq!(h, generate(vec![3, 4, 5, 6, 7, 8]));
+        assert_eq!(h, generate(vec![4,4,5,5,6,6,7,7]));
         assert_eq!(x, y);
     }
 
     #[test]
     fn hand_in_first_test2() {
-        let p = generate(vec![3, 3, 4, 4, 7, 9, 12, 13, 13]);
+        let p = generate(vec![3, 3, 4, 4, 7, 7, 9, 12, 13, 15]);
         let mut x = Strategy {
             bombs: Vec::new(),
             chains: Vec::new(),
             trios: Vec::new(),
-            pairs: generate(vec![3, 3, 5, 5]),
+            pairs: generate(vec![3, 3, 5, 5, 8, 8]),
             solos: generate(vec![7, 8, 9, 11]),
         };
         let y = Strategy {
             bombs: Vec::new(),
             chains: Vec::new(),
             trios: Vec::new(),
-            pairs: generate(vec![5, 5]),
+            pairs: generate(vec![5, 5, 8, 8]),
             solos: generate(vec![7, 8, 9, 11]),
         };
         let h = x.hand_in_first(&p);
@@ -685,10 +694,10 @@ mod tests {
 
     #[test]
     fn hand_in_first_test5() {
-        let p = generate(vec![7, 9, 12]);
+        let p = generate(vec![3,4,6,8,8,8,9,9,9,10,13]);
         let mut x = Strategy {
             bombs: generate(vec![8, 8, 8, 8]),
-            chains: generate(vec![4, 4, 5, 5, 5, 6, 6, 6, 9, 9]),
+            chains: generate(vec![4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 9, 9]),
             trios: Vec::new(),
             pairs: Vec::new(),
             solos: generate(vec![10, 11, 13]),
@@ -701,7 +710,29 @@ mod tests {
             solos: generate(vec![10, 11, 13]),
         };
         let h = x.hand_in_first(&p);
-        assert_eq!(h, generate(vec![4, 4, 5, 5, 5, 6, 6, 6, 9, 9]));
+        assert_eq!(h, generate(vec![4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 9, 9]));
+        assert_eq!(x, y);
+    }
+
+    #[test]
+    fn hand_in_first_test6() {
+        let p = generate(vec![6, 7, 8, 10, 11, 11, 14, 14]);
+        let mut x = Strategy {
+            bombs: generate(vec![8, 8, 8, 8]),
+            chains: Vec::new(),
+            trios: Vec::new(),
+            pairs: generate(vec![4, 4, 6, 6, 7, 7, 9, 9]),
+            solos: generate(vec![3, 4, 5, 7, 9, 15]),
+        };
+        let y = Strategy {
+            bombs: generate(vec![8, 8, 8, 8]),
+            chains: Vec::new(),
+            trios: Vec::new(),
+            pairs: generate(vec![4, 4, 6, 6, 7, 7, 9, 9]),
+            solos: generate(vec![4, 5, 7, 9, 15]),
+        };
+        let h = x.hand_in_first(&p);
+        assert_eq!(h, generate(vec![3]));
         assert_eq!(x, y);
     }
 }
