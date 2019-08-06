@@ -660,4 +660,48 @@ mod tests {
         assert_eq!(h, generate(vec![7]));
         assert_eq!(x, y);
     }
+
+    #[test]
+    fn hand_in_first_test4() {
+        let p = generate(vec![7, 9, 12]);
+        let mut x = Strategy {
+            bombs: generate(vec![5, 5, 5, 5]),
+            chains: Vec::new(),
+            trios: Vec::new(),
+            pairs: Vec::new(),
+            solos: Vec::new(),
+        };
+        let y = Strategy {
+            bombs: Vec::new(),
+            chains: Vec::new(),
+            trios: Vec::new(),
+            pairs: Vec::new(),
+            solos: Vec::new(),
+        };
+        let h = x.hand_in_first(&p);
+        assert_eq!(h, generate(vec![5, 5, 5, 5]));
+        assert_eq!(x, y);
+    }
+
+    #[test]
+    fn hand_in_first_test5() {
+        let p = generate(vec![7, 9, 12]);
+        let mut x = Strategy {
+            bombs: generate(vec![8, 8, 8, 8]),
+            chains: generate(vec![4, 4, 5, 5, 5, 6, 6, 6, 9, 9]),
+            trios: Vec::new(),
+            pairs: Vec::new(),
+            solos: generate(vec![10, 11, 13]),
+        };
+        let y = Strategy {
+            bombs: generate(vec![8, 8, 8, 8]),
+            chains: Vec::new(),
+            trios: Vec::new(),
+            pairs: Vec::new(),
+            solos: generate(vec![10, 11, 13]),
+        };
+        let h = x.hand_in_first(&p);
+        assert_eq!(h, generate(vec![4, 4, 5, 5, 5, 6, 6, 6, 9, 9]));
+        assert_eq!(x, y);
+    }
 }
