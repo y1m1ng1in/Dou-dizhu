@@ -69,6 +69,20 @@ impl Strategy {
         self.construct(&mut all_cards);
     }
 
+    pub fn all(self: &Self) -> Vec<Card> {
+        let mut all_cards = Vec::new();
+
+        all_cards.append(&mut self.bombs.clone());
+        all_cards.append(&mut self.chains.clone());
+        all_cards.append(&mut self.trios.clone());
+        all_cards.append(&mut self.pairs.clone());
+        all_cards.append(&mut self.solos.clone());
+
+        all_cards.sort_unstable();
+
+        all_cards
+    }
+
     fn search_chains(cards: &mut Vec<Card>) -> Vec<Card> {
         let mut indices;
         let mut has_more = true;
@@ -387,10 +401,35 @@ impl PartialEq for Strategy {
 }
 
 impl ComputerPlayer {
-    pub fn new(cards: Vec<Card>) -> ComputerPlayer {
-        ComputerPlayer {
-            strategy: Strategy::new(),
+    pub fn new(mut cards: Vec<Card>) -> ComputerPlayer {
+        let mut s = Strategy::new();
+        s.construct(&mut cards);
+
+        ComputerPlayer { strategy: s }
+    }
+
+    pub fn hand_in_follow(self: &mut Self, greater_than: &[Card], pattern: Pattern) -> Vec<Card> {
+        let handed = self
+            .strategy
+            .hand_in_greater_from_strategy(greater_than, pattern);
+        
+        if handed.is_empty() {
+            self.strategy.hand_in_greater_by_merged(greater_than, pattern)
+        } else {
+            self.strategy.reconstruct();
+            handed
         }
+    }
+
+    pub fn hand_in_first(self: &mut Self, player: &[Card]) -> Vec<Card> {
+        let handed = self.strategy.hand_in_first(player);
+
+        self.strategy.reconstruct();
+        handed
+    }
+
+    pub fn display(self: &Self) -> Vec<Card> {
+        self.strategy.all()
     }
 }
 
@@ -606,10 +645,10 @@ mod tests {
 
     #[test]
     fn hand_in_first_test1() {
-        let p = generate(vec![3,3,4,8,8,9,9,10,10,13,14]);
+        let p = generate(vec![3, 3, 4, 8, 8, 9, 9, 10, 10, 13, 14]);
         let mut x = Strategy {
             bombs: Vec::new(),
-            chains: generate(vec![4,4,5,5,6,6,7,7]),
+            chains: generate(vec![4, 4, 5, 5, 6, 6, 7, 7]),
             trios: Vec::new(),
             pairs: generate(vec![3, 3, 5, 5]),
             solos: generate(vec![7, 8, 9, 11]),
@@ -622,7 +661,7 @@ mod tests {
             solos: generate(vec![7, 8, 9, 11]),
         };
         let h = x.hand_in_first(&p);
-        assert_eq!(h, generate(vec![4,4,5,5,6,6,7,7]));
+        assert_eq!(h, generate(vec![4, 4, 5, 5, 6, 6, 7, 7]));
         assert_eq!(x, y);
     }
 
@@ -694,7 +733,7 @@ mod tests {
 
     #[test]
     fn hand_in_first_test5() {
-        let p = generate(vec![3,4,6,8,8,8,9,9,9,10,13]);
+        let p = generate(vec![3, 4, 6, 8, 8, 8, 9, 9, 9, 10, 13]);
         let mut x = Strategy {
             bombs: generate(vec![8, 8, 8, 8]),
             chains: generate(vec![4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 9, 9]),
