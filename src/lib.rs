@@ -1,14 +1,15 @@
 #![recursion_limit = "256"]
 
+pub mod cardbufui;
 pub mod cards;
-pub mod player;
 pub mod cardui;
+pub mod player;
+use yew::prelude::*;
+use yew::services::ConsoleService;
 
 use cards::card::Card;
 use cards::card::Suit;
 use cardui::CardUI;
-use yew::services::ConsoleService;
-use yew::prelude::*;
 
 pub struct Model {
     console: ConsoleService,
@@ -35,7 +36,7 @@ impl Component for Model {
         match msg {
             Msg::Foo => {
                 self.console.log("A try to console service");
-            },
+            }
             Msg::CardClicked(c) => {
                 self.console.log(&c.value.to_string());
             }

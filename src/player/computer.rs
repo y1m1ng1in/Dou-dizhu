@@ -412,9 +412,10 @@ impl ComputerPlayer {
         let handed = self
             .strategy
             .hand_in_greater_from_strategy(greater_than, pattern);
-        
+
         if handed.is_empty() {
-            self.strategy.hand_in_greater_by_merged(greater_than, pattern)
+            self.strategy
+                .hand_in_greater_by_merged(greater_than, pattern)
         } else {
             self.strategy.reconstruct();
             handed

@@ -1,7 +1,6 @@
-use yew::prelude::*;
-
 use super::cards::card::Card;
 use super::cards::card::Suit;
+use yew::prelude::*;
 
 pub struct CardUI {
     card: Card,
@@ -42,6 +41,7 @@ impl Component for CardUI {
         match msg {
             Msg::Clicked => {
                 if let Some(ref onsignal) = self.onsignal {
+                    self.card.selected = true; // move to card buffer?
                     onsignal.emit(self.card.clone());
                 }
             }
@@ -70,7 +70,6 @@ impl Renderable<CardUI> for CardUI {
     }
 }
 
-
 fn display_card(card: &Card) -> (String, String, String) {
     let str_value: String;
     let str_suit: String;
@@ -93,7 +92,7 @@ fn display_card(card: &Card) -> (String, String, String) {
     }
 
     if card.suit == Suit::Heart {
-        str_suit = "♥".to_string(); 
+        str_suit = "♥".to_string();
         str_class = " red".to_string();
     } else if card.suit == Suit::Spade {
         str_suit = "♠".to_string();
