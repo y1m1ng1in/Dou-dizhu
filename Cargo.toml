@@ -5,7 +5,6 @@ authors = ["Yiming Lin <yl6@pdx.edu>"]
 edition = "2018"
 
 [dependencies]
-stdweb = "0.4.2"
 yew = { git = "https://github.com/DenisKolodin/yew", features = ["toml", "yaml", "msgpack", "cbor"] }
 
 [target.'cfg(all(target_arch = "wasm32", not(cargo_web)))'.dependencies]
