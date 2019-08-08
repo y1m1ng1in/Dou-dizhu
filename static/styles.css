@@ -30,3 +30,7 @@
 .black {
   color: black;
 }
+
+.cards-container {
+  overflow: auto;
+}

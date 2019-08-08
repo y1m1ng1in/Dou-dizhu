@@ -41,7 +41,7 @@ impl Component for CardUI {
         match msg {
             Msg::Clicked => {
                 if let Some(ref onsignal) = self.onsignal {
-                    self.card.selected = true; // move to card buffer?
+                    //self.card.selected = true; // move to card buffer?
                     onsignal.emit(self.card.clone());
                 }
             }

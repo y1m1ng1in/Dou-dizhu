@@ -39,13 +39,13 @@ impl Component for CardBufUI {
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::CardClicked(c) => {
+            Msg::CardClicked(card) => {
                 if let Some(ref onsignal) = self.onsignal {
-                    onsignal.emit(c);
-                }
+                    onsignal.emit(card);
+                } 
             }
         }
-        false
+        true
     }
 
     fn change(&mut self, props: Self::Properties) -> ShouldRender {
@@ -63,7 +63,7 @@ impl Renderable<CardBufUI> for CardBufUI {
             }
         };
         html! {
-            <div>
+            <div class="cards-container">
                 { for self.cards.iter().map(c) }
             </div>
         }
