@@ -58,20 +58,23 @@ impl Component for CardUI {
 
 impl Renderable<CardUI> for CardUI {
     fn view(&self) -> Html<Self> {
-        let (val, suit) = display_card(&self.card);
+        let (val, suit, color) = display_card(&self.card);
+        let style1 = "card-text ".to_string() + &color;
+        let style2 = "card-img ".to_string() + &color;
         html! {
             <div class="card-small" onclick=|_| Msg::Clicked>
-                <p class="card-text black">{ val }</p>
-                <p class="card-img black">{ suit }</p>
+                <p class=style1>{ val }</p>
+                <p class=style2>{ suit }</p>
             </div>
         }
     }
 }
 
 
-fn display_card(card: &Card) -> (String, String) {
+fn display_card(card: &Card) -> (String, String, String) {
     let str_value: String;
     let str_suit: String;
+    let str_class: String;
 
     if card.value >= 3 && card.value <= 10 {
         str_value = card.value.to_string();
@@ -91,15 +94,20 @@ fn display_card(card: &Card) -> (String, String) {
 
     if card.suit == Suit::Heart {
         str_suit = "♥".to_string(); 
+        str_class = " red".to_string();
     } else if card.suit == Suit::Spade {
         str_suit = "♠".to_string();
+        str_class = " black".to_string();
     } else if card.suit == Suit::Club {
         str_suit = "♣".to_string();
+        str_class = " black".to_string();
     } else if card.suit == Suit::Diamond {
         str_suit = "♦".to_string();
+        str_class = " red".to_string();
     } else {
         str_suit = "?".to_string();
+        str_class = " ?".to_string();
     }
 
-    (str_value, str_suit)
+    (str_value, str_suit, str_class)
 }

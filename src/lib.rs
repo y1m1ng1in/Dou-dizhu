@@ -56,7 +56,6 @@ impl Renderable<Model> for Model {
                 <h1>{ "Dou dizhu (tranditional Chinese card game) ---- A frontend project in Rust!" }</h1>
                 <h3>{ "Not implemented yet!" }</h3>
                 <button onclick=|_| Msg::Foo>{ "Look At Console" }</button>
-                <p>{ self.dummy }</p>
 
                 <div>
                     <CardUI card=c1 onsignal=Msg::CardClicked />
