@@ -1,19 +1,18 @@
 #![recursion_limit = "256"]
 
-pub mod cardbufui;
 pub mod cards;
-pub mod cardui;
 pub mod player;
-use yew::prelude::*;
-use yew::services::ConsoleService;
+pub mod cardui;
+pub mod cardbufui;
 
 use cards::card::Card;
 use cards::card::Suit;
-use cardui::CardUI;
+use cardbufui::CardBufUI;
+use yew::prelude::*;
+use yew::services::ConsoleService;
 
 pub struct Model {
     console: ConsoleService,
-    dummy: u32,
 }
 
 pub enum Msg {
@@ -28,7 +27,6 @@ impl Component for Model {
     fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
         Model {
             console: ConsoleService::new(),
-            dummy: 0,
         }
     }
 
@@ -51,6 +49,7 @@ impl Renderable<Model> for Model {
         let c2 = Card::new(5u32, Suit::Spade, false);
         let c3 = Card::new(12u32, Suit::Diamond, false);
         let c4 = Card::new(14u32, Suit::Heart, false);
+        let c = vec![c1, c2, c3, c4];
 
         html! {
             <div>
@@ -58,12 +57,7 @@ impl Renderable<Model> for Model {
                 <h3>{ "Not implemented yet!" }</h3>
                 <button onclick=|_| Msg::Foo>{ "Look At Console" }</button>
 
-                <div>
-                    <CardUI card=c1 onsignal=Msg::CardClicked />
-                    <CardUI card=c2 onsignal=Msg::CardClicked />
-                    <CardUI card=c3 onsignal=Msg::CardClicked />
-                    <CardUI card=c4 onsignal=Msg::CardClicked />
-                </div>
+                <CardBufUI cards=c onsignal=Msg::CardClicked />
             </div>
         }
     }
