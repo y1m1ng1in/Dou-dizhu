@@ -27,7 +27,12 @@ impl Airplane {
 
     // cards' value has already sorted in ascending
     pub fn is_airplane(cards: &[Card]) -> bool {
-        Airplane::find_size(cards).1 >= 2
+        let trio_num = Airplane::find_size(cards).1;
+
+        (trio_num * 3 == cards.len()
+            || trio_num * 3 + trio_num == cards.len()
+            || trio_num * 3 + trio_num * 2 == cards.len())
+            && trio_num >= 2
     }
 
     fn find_size(cards: &[Card]) -> (usize, usize) {

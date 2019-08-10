@@ -93,7 +93,7 @@ fn get_cards() -> Vec<Card> {
     let c6 = Card::new(7u32, Suit::Diamond, false);
     let c7 = Card::new(8u32, Suit::Spade, false);
     let c8 = Card::new(8u32, Suit::Heart, false);
-    let c9 = Card::new(9u32, Suit::Diamond, false);
+    let c9 = Card::new(8u32, Suit::Diamond, false);
     let c10 = Card::new(9u32, Suit::Spade, false);
     let c = vec![c1, c2, c3, c4, c5, c6, c7, c8, c9, c10];
 
