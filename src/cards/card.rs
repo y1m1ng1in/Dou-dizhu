@@ -93,3 +93,13 @@ impl fmt::Debug for Card {
         )
     }
 }
+
+impl fmt::Display for Card {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "Card {{ value: {}, suit: {}, selected: {} }}\n",
+            self.value, self.suit, self.selected
+        )
+    }
+}

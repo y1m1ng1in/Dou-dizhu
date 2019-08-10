@@ -8,6 +8,7 @@ use super::super::cards::solochain::SoloChain;
 use super::super::cards::trio::Trio;
 use super::super::cards::trio::TrioSearch;
 use super::super::cards::utils::*;
+use std::fmt;
 
 #[derive(Debug)]
 pub struct Strategy {
@@ -34,6 +35,40 @@ pub fn split_from_indice(cards: &mut Vec<Card>, indices: &[usize]) -> Vec<Card> 
     }
 
     result
+}
+
+impl fmt::Display for Strategy {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut s = String::new();
+
+        s = s + "Bombs:\n";
+        for i in &self.bombs {
+            s = s + &i.to_string();
+        }
+        s = s + "Chains:\n";
+        for i in &self.chains {
+            s = s + &i.to_string();
+        }
+        s = s + "Trios:\n";
+        for i in &self.trios {
+            s = s + &i.to_string();
+        }
+        s = s + "Pairs:\n";
+        for i in &self.pairs {
+            s = s + &i.to_string();
+        }
+        s = s + "Solos:\n";
+        for i in &self.solos {
+            s = s + &i.to_string();
+        } 
+        write!(f, "{}", &s)
+    }
+}
+
+impl fmt::Display for ComputerPlayer {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.strategy)
+    }
 }
 
 impl Strategy {
