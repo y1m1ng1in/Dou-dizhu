@@ -36,3 +36,17 @@
   height: 90px;
   margin-bottom: 2px;
 }
+
+.user-container {
+  position: absolute;
+  bottom: 2px;
+  height: 240px;
+  left: 50%;
+  transform: translate(-50%, 0%);
+}
+
+.user-button-container {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0%);
+}

@@ -73,11 +73,17 @@ impl Renderable<Model> for Model {
     fn view(&self) -> Html<Self> {
         html! {
             <div>
-                <CardBufUI cards=&self.player_buffer onsignal=Msg::PlayerBufferClicked />
-                <CardBufUI cards=&self.player_cards onsignal=Msg::PlayerCardClicked />
-                <button onclick=|_| Msg::PlayerHandIn>{ "Hand in" }</button>
-                <button onclick=|_| Msg::PlayerPass>{ "Pass" }</button>
-                <p>{ &self.player_message }</p>
+                <div class="computer-container">
+                </div>
+                <div class="user-container">
+                    <CardBufUI cards=&self.player_buffer onsignal=Msg::PlayerBufferClicked />
+                    <CardBufUI cards=&self.player_cards onsignal=Msg::PlayerCardClicked />
+                    <div class="user-button-container">
+                        <button onclick=|_| Msg::PlayerHandIn>{ "Hand in" }</button>
+                        <button onclick=|_| Msg::PlayerPass>{ "Pass" }</button>
+                    </div>
+                    <p>{ &self.player_message }</p>
+                </div>
             </div>
         }
     }
