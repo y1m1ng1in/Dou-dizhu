@@ -4,7 +4,10 @@ pub struct Bomb {}
 
 impl Bomb {
     pub fn is_bomb(cards: &[Card]) -> bool {
-        cards.iter().max() == cards.iter().min() && cards.len() == 4
+        cards.len() == 4
+            && cards[0].value == cards[1].value
+            && cards[1].value == cards[2].value
+            && cards[2].value == cards[3].value
     }
 
     pub fn search_greater_cards(cards: &[Card], greater_than: &[Card]) -> Option<Vec<usize>> {

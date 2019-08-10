@@ -87,7 +87,7 @@ impl Renderable<Model> for Model {
 fn get_cards() -> Vec<Card> {
     let c1 = Card::new(3u32, Suit::Club, false);
     let c2 = Card::new(5u32, Suit::Spade, false);
-    let c3 = Card::new(6u32, Suit::Diamond, false);
+    let c3 = Card::new(7u32, Suit::Spade, false);
     let c4 = Card::new(7u32, Suit::Heart, false);
     let c5 = Card::new(7u32, Suit::Club, false);
     let c6 = Card::new(7u32, Suit::Diamond, false);
