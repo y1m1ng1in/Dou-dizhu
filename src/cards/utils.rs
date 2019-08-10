@@ -5,6 +5,7 @@ use super::pair::Pair;
 use super::pairchain::PairChain;
 use super::solochain::SoloChain;
 use super::trio::Trio;
+use std::fmt;
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum Pattern {
@@ -18,10 +19,26 @@ pub enum Pattern {
     Invalid,
 }
 
-pub fn get_pattern(cards: &Vec<Card>) -> Pattern {
+impl fmt::Display for Pattern {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            Pattern::Bomb => write!(f, "Bomb"),
+            Pattern::Airplane => write!(f, "Airplane"),
+            Pattern::PairChain => write!(f, "PairChain"),
+            Pattern::SoloChain => write!(f, "SoloChain"),
+            Pattern::Trio => write!(f, "Trio"),
+            Pattern::Pair => write!(f, "Pair"),
+            Pattern::Solo => write!(f, "Solo"),
+            Pattern::Invalid => write!(f, "Invalid"),
+        }
+    }
+}
+
+
+pub fn get_pattern(cards: &[Card]) -> Pattern {
     if Airplane::is_airplane(&cards) {
         Pattern::Airplane
-    } else if Bomb::is_bomb(&cards) || Rocket::is_rocket(&cards) {
+    } else if Bomb::is_bomb(cards) {
         Pattern::Bomb
     } else if PairChain::is_pair_chain(cards) {
         Pattern::PairChain
@@ -38,7 +55,7 @@ pub fn get_pattern(cards: &Vec<Card>) -> Pattern {
     }
 }
 
-pub fn compare(c1: &Vec<Card>, c2: &Vec<Card>) -> i32 {
+pub fn compare(c1: &[Card], c2: &[Card]) -> i32 {
     let p = get_pattern(c1);
 
     if get_pattern(c2) == p {
@@ -57,7 +74,7 @@ pub fn compare(c1: &Vec<Card>, c2: &Vec<Card>) -> i32 {
     }
 }
 
-pub fn compare_known_pattern(c1: &Vec<Card>, c2: &Vec<Card>, p: Pattern) -> i32 {
+pub fn compare_known_pattern(c1: &[Card], c2: &[Card], p: Pattern) -> i32 {
     match p {
         Pattern::Bomb => Bomb::compare(c1, c2),
         Pattern::Airplane => Airplane::compare(c1, c2),

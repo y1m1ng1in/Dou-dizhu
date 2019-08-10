@@ -1,9 +1,6 @@
 use super::card::Card;
-use super::card::Suit;
 
 pub struct Bomb {}
-
-pub struct Rocket {}
 
 impl Bomb {
     pub fn is_bomb(cards: &[Card]) -> bool {
@@ -52,10 +49,8 @@ impl Bomb {
         result
     }
 
-    pub fn compare(c1: &Vec<Card>, c2: &Vec<Card>) -> i32 {
-        if (Bomb::is_bomb(c1) || Rocket::is_rocket(c1))
-            && (Bomb::is_bomb(c2) || Rocket::is_rocket(c2))
-        {
+    pub fn compare(c1: &[Card], c2: &[Card]) -> i32 {
+        if Bomb::is_bomb(c1) && Bomb::is_bomb(c2) {
             if c1[0].value > c2[0].value {
                 1
             } else {
@@ -64,22 +59,6 @@ impl Bomb {
         } else {
             -1
         }
-    }
-}
-
-impl Rocket {
-    pub fn is_rocket(cards: &[Card]) -> bool {
-        let type1 = match cards[0].suit {
-            Suit::Joker => true,
-            _ => false,
-        };
-
-        let type2 = match cards[1].suit {
-            Suit::Joker => true,
-            _ => false,
-        };
-
-        type1 && type2 && cards.len() == 2
     }
 }
 

@@ -7,6 +7,7 @@ pub mod cardbufui;
 
 use cards::card::Card;
 use cards::card::Suit;
+use cards::utils;
 use cardbufui::CardBufUI;
 use yew::prelude::*;
 use yew::services::ConsoleService;
@@ -55,7 +56,7 @@ impl Component for Model {
                 self.player_cards.sort();
             }
             Msg::PlayerHandIn => {
-                // figure out pattern in player buffer
+                self.player_message = utils::get_pattern(&self.player_buffer).to_string();
             }
             Msg::PlayerPass => {
                 self.player_cards.append(&mut self.player_buffer);
