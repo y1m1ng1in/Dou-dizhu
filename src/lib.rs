@@ -1,14 +1,14 @@
 #![recursion_limit = "256"]
 
-pub mod cards;
-pub mod player;
-pub mod cardui;
 pub mod cardbufui;
+pub mod cards;
+pub mod cardui;
+pub mod player;
 
+use cardbufui::CardBufUI;
 use cards::card::Card;
 use cards::card::Suit;
 use cards::utils;
-use cardbufui::CardBufUI;
 use yew::prelude::*;
 use yew::services::ConsoleService;
 
@@ -44,13 +44,15 @@ impl Component for Model {
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg::PlayerCardClicked(card) => {
-                self.console.log(&(card.value.to_string() + " in PlayerCard"));
+                self.console
+                    .log(&(card.value.to_string() + " in PlayerCard"));
                 self.player_cards.retain(|&c| c != card);
                 self.player_buffer.push(card);
                 self.player_buffer.sort();
             }
             Msg::PlayerBufferClicked(card) => {
-                self.console.log(&(card.value.to_string() + " in PlayerBuffer"));
+                self.console
+                    .log(&(card.value.to_string() + " in PlayerBuffer"));
                 self.player_buffer.retain(|&c| c != card);
                 self.player_cards.push(card);
                 self.player_cards.sort();
@@ -85,9 +87,15 @@ impl Renderable<Model> for Model {
 fn get_cards() -> Vec<Card> {
     let c1 = Card::new(3u32, Suit::Club, false);
     let c2 = Card::new(5u32, Suit::Spade, false);
-    let c3 = Card::new(12u32, Suit::Diamond, false);
-    let c4 = Card::new(14u32, Suit::Heart, false);
-    let c = vec![c1, c2, c3, c4];
+    let c3 = Card::new(6u32, Suit::Diamond, false);
+    let c4 = Card::new(7u32, Suit::Heart, false);
+    let c5 = Card::new(7u32, Suit::Club, false);
+    let c6 = Card::new(7u32, Suit::Diamond, false);
+    let c7 = Card::new(8u32, Suit::Spade, false);
+    let c8 = Card::new(8u32, Suit::Heart, false);
+    let c9 = Card::new(9u32, Suit::Diamond, false);
+    let c10 = Card::new(9u32, Suit::Spade, false);
+    let c = vec![c1, c2, c3, c4, c5, c6, c7, c8, c9, c10];
 
     c
 }

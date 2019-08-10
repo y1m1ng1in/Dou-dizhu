@@ -34,7 +34,6 @@ impl fmt::Display for Pattern {
     }
 }
 
-
 pub fn get_pattern(cards: &[Card]) -> Pattern {
     if Airplane::is_airplane(&cards) {
         Pattern::Airplane

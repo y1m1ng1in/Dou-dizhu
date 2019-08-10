@@ -50,7 +50,7 @@ impl<'a> Iterator for TrioIterator<'a> {
 
 impl Trio {
     pub fn is_trio(cards: &[Card]) -> bool {
-        cards.len() == 3 && cards.iter().min() == cards.iter().max()
+        cards.len() == 3 && cards[0].value == cards[1].value && cards[1].value == cards[2].value
     }
 
     pub fn search_greater_cards(cards: &[Card], greater_than: &[Card]) -> Option<Vec<usize>> {

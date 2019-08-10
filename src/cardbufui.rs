@@ -42,7 +42,7 @@ impl Component for CardBufUI {
             Msg::CardClicked(card) => {
                 if let Some(ref onsignal) = self.onsignal {
                     onsignal.emit(card);
-                } 
+                }
             }
         }
         true

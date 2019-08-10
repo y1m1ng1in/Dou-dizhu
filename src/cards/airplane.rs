@@ -27,7 +27,7 @@ impl Airplane {
 
     // cards' value has already sorted in ascending
     pub fn is_airplane(cards: &[Card]) -> bool {
-        Airplane::find_size(cards).1 != 0
+        Airplane::find_size(cards).1 >= 2
     }
 
     fn find_size(cards: &[Card]) -> (usize, usize) {
@@ -278,7 +278,7 @@ mod tests {
         let c6 = generate(vec![3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 7, 8]);
 
         assert_eq!(true, Airplane::is_airplane(&c1));
-        assert_eq!(true, Airplane::is_airplane(&c2));
+        assert_eq!(false, Airplane::is_airplane(&c2));
         assert_eq!(true, Airplane::is_airplane(&c3));
         assert_eq!(true, Airplane::is_airplane(&c4));
         assert_eq!(true, Airplane::is_airplane(&c5));
