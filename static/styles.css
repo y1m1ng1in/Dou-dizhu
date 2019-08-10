@@ -33,4 +33,6 @@
 
 .cards-container {
   overflow: auto;
+  height: 90px;
+  margin-bottom: 2px;
 }

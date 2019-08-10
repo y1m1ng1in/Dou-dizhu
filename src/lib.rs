@@ -15,12 +15,14 @@ pub struct Model {
     console: ConsoleService,
     player_cards: Vec<Card>,
     player_buffer: Vec<Card>,
+    player_message: String,
 }
 
 pub enum Msg {
-    Foo,
     PlayerCardClicked(Card),
     PlayerBufferClicked(Card),
+    PlayerHandIn,
+    PlayerPass,
 }
 
 impl Component for Model {
@@ -34,14 +36,12 @@ impl Component for Model {
             console: ConsoleService::new(),
             player_cards: c,
             player_buffer: vec![],
+            player_message: String::new(),
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::Foo => {
-                self.console.log("A try to console service");
-            }
             Msg::PlayerCardClicked(card) => {
                 self.console.log(&(card.value.to_string() + " in PlayerCard"));
                 self.player_cards.retain(|&c| c != card);
@@ -52,6 +52,13 @@ impl Component for Model {
                 self.console.log(&(card.value.to_string() + " in PlayerBuffer"));
                 self.player_buffer.retain(|&c| c != card);
                 self.player_cards.push(card);
+                self.player_cards.sort();
+            }
+            Msg::PlayerHandIn => {
+                // figure out pattern in player buffer
+            }
+            Msg::PlayerPass => {
+                self.player_cards.append(&mut self.player_buffer);
                 self.player_cards.sort();
             }
         }
@@ -65,6 +72,9 @@ impl Renderable<Model> for Model {
             <div>
                 <CardBufUI cards=&self.player_buffer onsignal=Msg::PlayerBufferClicked />
                 <CardBufUI cards=&self.player_cards onsignal=Msg::PlayerCardClicked />
+                <button onclick=|_| Msg::PlayerHandIn>{ "Hand in" }</button>
+                <button onclick=|_| Msg::PlayerPass>{ "Pass" }</button>
+                <p>{ &self.player_message }</p>
             </div>
         }
     }
