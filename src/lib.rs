@@ -73,6 +73,7 @@ impl Component for Model {
                     self.computer_buffer = self
                         .computer_strategy
                         .hand_in_follow(&self.player_buffer, pattern);
+                    self.player_buffer = vec![];
                     self.computer_cards = self.computer_strategy.display();
                 } else {
                     self.player_cards.append(&mut self.player_buffer);
@@ -130,16 +131,16 @@ fn get_cards() -> (Vec<Card>, Vec<Card>) {
 
     let user1 = Card::new(3u32, Suit::Club, false);
     let user2 = Card::new(5u32, Suit::Spade, false);
-    let user3 = Card::new(7u32, Suit::Spade, false);
-    let user4 = Card::new(7u32, Suit::Heart, false);
-    let user5 = Card::new(7u32, Suit::Club, false);
-    let user6 = Card::new(7u32, Suit::Diamond, false);
-    let user7 = Card::new(8u32, Suit::Spade, false);
-    let user8 = Card::new(8u32, Suit::Heart, false);
-    let user9 = Card::new(8u32, Suit::Diamond, false);
+    let user3 = Card::new(9u32, Suit::Spade, false);
+    let user4 = Card::new(9u32, Suit::Heart, false);
+    let user5 = Card::new(9u32, Suit::Club, false);
+    let user6 = Card::new(10u32, Suit::Diamond, false);
+    let user7 = Card::new(10u32, Suit::Spade, false);
+    let user8 = Card::new(10u32, Suit::Heart, false);
+    let user9 = Card::new(13u32, Suit::Diamond, false);
     let u = vec![
         user1, user2, user3, user4, user5, user6, user7, user8, user9,
     ];
 
-    (u, c)
+    (c, u)
 }

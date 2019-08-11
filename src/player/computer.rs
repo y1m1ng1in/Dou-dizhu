@@ -187,7 +187,7 @@ impl Strategy {
         greater_than: &[Card],
         pattern: Pattern,
     ) -> Vec<Card> {
-        let indices;
+        let mut indices;
 
         match pattern {
             Pattern::Bomb => {
@@ -198,6 +198,7 @@ impl Strategy {
             Pattern::Airplane => {
                 indices = Airplane::search_greater_cards(&self.chains, greater_than)
                     .unwrap_or(Vec::new());
+                indices.sort_unstable();
                 split_from_indice(&mut self.chains, &indices)
             }
             Pattern::SoloChain => {
