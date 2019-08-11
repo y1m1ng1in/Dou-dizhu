@@ -70,31 +70,64 @@ impl Component for Model {
             }
             Msg::PlayerHandIn => {
                 let pattern = utils::get_pattern(&self.player_buffer);
+                let mut rc = 1;
 
                 if pattern != utils::Pattern::Invalid {
-                    self.computer_buffer = self
-                        .computer_strategy
-                        .hand_in_follow(&self.player_buffer, pattern);
-                    
-                    if self.computer_buffer.is_empty() {
-                        self.computer_pass = true;
-                    } else {
-                        self.computer_pass = false;
+                    if !self.computer_buffer.is_empty() {
+                        rc = utils::compare_known_pattern(
+                            &self.player_buffer,
+                            &self.computer_buffer,
+                            pattern,
+                        );
                     }
-                    
-                    self.player_buffer = vec![];
-                    self.computer_cards = self.computer_strategy.display();
+
+                    if rc == 1 {
+                        self.computer_buffer = self
+                            .computer_strategy
+                            .hand_in_follow(&self.player_buffer, pattern);
+                        self.player_buffer = vec![];
+
+                        if self.computer_buffer.is_empty() {
+                            self.computer_pass = true;
+                        } else {
+                            self.computer_pass = false;
+                        }
+
+                        self.computer_cards = self.computer_strategy.display();
+                    } else {
+                        self.player_cards.append(&mut self.player_buffer);
+                        self.player_cards.sort();
+                    }
+
+                    if rc == 0 {
+                        self.player_message =
+                            "Should hand in cards with greater value..".to_string();
+                    } else if rc == -1 {
+                        self.player_message =
+                            "Pattern doesn't matching with computer player..".to_string();
+                    } else {
+                        self.player_message = pattern.to_string();
+                    }
                 } else {
                     self.player_cards.append(&mut self.player_buffer);
                     self.player_cards.sort();
+                    self.player_message = pattern.to_string();
                 }
-                
-                self.player_message = pattern.to_string();
+
                 self.console.log(&self.computer_strategy.to_string());
             }
             Msg::PlayerPass => {
                 self.player_cards.append(&mut self.player_buffer);
                 self.player_cards.sort();
+                self.player_message = String::new();
+
+                self.computer_buffer = self.computer_strategy.hand_in_first(&self.player_cards);
+                self.computer_cards = self.computer_strategy.display();
+                self.computer_pass = false;
+
+                if self.computer_buffer.is_empty() {
+                    self.player_message = "Internal error occurs!".to_string();
+                }
             }
         }
         true
@@ -103,6 +136,10 @@ impl Component for Model {
 
 impl Renderable<Model> for Model {
     fn view(&self) -> Html<Self> {
+        let pass_btn = match self.computer_buffer.len() {
+            0 => "display: none",
+            _ => "display: inline",
+        };
         html! {
             <div>
                 <div class="computer-container">
@@ -114,7 +151,7 @@ impl Renderable<Model> for Model {
                     <CardBufUI cards=&self.player_cards onsignal=Msg::PlayerCardClicked />
                     <div class="user-button-container">
                         <button onclick=|_| Msg::PlayerHandIn>{ "Hand in" }</button>
-                        <button onclick=|_| Msg::PlayerPass>{ "Pass" }</button>
+                        <button style=pass_btn onclick=|_| Msg::PlayerPass>{ "Pass" }</button>
                     </div>
                     <p>{ &self.player_message }</p>
                 </div>
