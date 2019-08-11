@@ -21,6 +21,7 @@ pub struct Model {
     computer_cards: Vec<Card>,
     computer_buffer: Vec<Card>,
     computer_strategy: ComputerPlayer,
+    computer_pass: bool,
 }
 
 pub enum Msg {
@@ -47,6 +48,7 @@ impl Component for Model {
             computer_cards: computer_card,
             computer_buffer: vec![],
             computer_strategy: strategy,
+            computer_pass: false,
         }
     }
 
@@ -73,12 +75,20 @@ impl Component for Model {
                     self.computer_buffer = self
                         .computer_strategy
                         .hand_in_follow(&self.player_buffer, pattern);
+                    
+                    if self.computer_buffer.is_empty() {
+                        self.computer_pass = true;
+                    } else {
+                        self.computer_pass = false;
+                    }
+                    
                     self.player_buffer = vec![];
                     self.computer_cards = self.computer_strategy.display();
                 } else {
                     self.player_cards.append(&mut self.player_buffer);
                     self.player_cards.sort();
                 }
+                
                 self.player_message = pattern.to_string();
                 self.console.log(&self.computer_strategy.to_string());
             }
@@ -97,7 +107,7 @@ impl Renderable<Model> for Model {
             <div>
                 <div class="computer-container">
                     <CardBufUI cards=&self.computer_cards />
-                    <CardBufUI cards=&self.computer_buffer />
+                    <CardBufUI cards=&self.computer_buffer ispass=self.computer_pass />
                 </div>
                 <div class="user-container">
                     <CardBufUI cards=&self.player_buffer onsignal=Msg::PlayerBufferClicked />
@@ -142,5 +152,5 @@ fn get_cards() -> (Vec<Card>, Vec<Card>) {
         user1, user2, user3, user4, user5, user6, user7, user8, user9,
     ];
 
-    (c, u)
+    (u, c)
 }

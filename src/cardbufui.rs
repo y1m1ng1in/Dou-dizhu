@@ -5,6 +5,7 @@ use yew::prelude::*;
 pub struct CardBufUI {
     cards: Vec<Card>,
     onsignal: Option<Callback<Card>>,
+    ispass: bool,
 }
 
 pub enum Msg {
@@ -15,6 +16,7 @@ pub enum Msg {
 pub struct Props {
     pub cards: Vec<Card>,
     pub onsignal: Option<Callback<Card>>,
+    pub ispass: bool,
 }
 
 impl Default for Props {
@@ -22,6 +24,7 @@ impl Default for Props {
         Props {
             cards: Vec::new(),
             onsignal: None,
+            ispass: false,
         }
     }
 }
@@ -34,6 +37,7 @@ impl Component for CardBufUI {
         CardBufUI {
             cards: props.cards,
             onsignal: props.onsignal,
+            ispass: props.ispass,
         }
     }
 
@@ -51,6 +55,7 @@ impl Component for CardBufUI {
     fn change(&mut self, props: Self::Properties) -> ShouldRender {
         self.cards = props.cards;
         self.onsignal = props.onsignal;
+        self.ispass = props.ispass;
         true
     }
 }
@@ -62,10 +67,21 @@ impl Renderable<CardBufUI> for CardBufUI {
                 <CardUI card=x onsignal=Msg::CardClicked />
             }
         };
-        html! {
-            <div class="cards-container">
-                { for self.cards.iter().map(c) }
-            </div>
+        match self.ispass {
+            true => {
+                html! {
+                    <div class="cards-container">
+                        <p class="pass-text">{ "Pass" }</p>
+                    </div>
+                }
+            }
+            false => {
+                html! {
+                    <div class="cards-container">
+                        { for self.cards.iter().map(c) }
+                    </div>
+                }
+            }
         }
     }
 }

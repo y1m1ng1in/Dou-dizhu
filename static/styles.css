@@ -37,6 +37,12 @@
   margin-bottom: 2px;
 }
 
+.computer-container {
+  position: absolute;
+  top: 5px;
+  height: 240px;
+}
+
 .user-container {
   position: absolute;
   bottom: 2px;
@@ -45,8 +51,12 @@
   transform: translate(-50%, 0%);
 }
 
+.pass-text {
+  text-align: center;
+}
+
 .user-button-container {
-  position: absolute;
+  position: relative;
   left: 50%;
   transform: translate(-50%, 0%);
 }
