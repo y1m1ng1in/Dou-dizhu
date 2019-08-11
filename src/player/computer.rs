@@ -60,7 +60,7 @@ impl fmt::Display for Strategy {
         s = s + "Solos:\n";
         for i in &self.solos {
             s = s + &i.to_string();
-        } 
+        }
         write!(f, "{}", &s)
     }
 }
