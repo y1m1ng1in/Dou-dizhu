@@ -1,3 +1,9 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
 .card-small {
   border: .2em solid black;
   border-radius: 10%;
@@ -59,4 +65,11 @@
   position: relative;
   left: 50%;
   transform: translate(-50%, 0%);
+}
+
+.select-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

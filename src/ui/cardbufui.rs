@@ -1,5 +1,5 @@
-use super::cards::card::Card;
-use crate::cardui::CardUI;
+use super::super::cards::card::Card;
+use super::cardui::CardUI;
 use yew::prelude::*;
 
 pub struct CardBufUI {
@@ -67,20 +67,17 @@ impl Renderable<CardBufUI> for CardBufUI {
                 <CardUI card=x onsignal=Msg::CardClicked />
             }
         };
-        match self.ispass {
-            true => {
-                html! {
-                    <div class="cards-container">
-                        <p class="pass-text">{ "Pass" }</p>
-                    </div>
-                }
+        if self.ispass {
+            html! {
+                <div class="cards-container">
+                    <p class="pass-text">{ "Pass" }</p>
+                </div>
             }
-            false => {
-                html! {
-                    <div class="cards-container">
-                        { for self.cards.iter().map(c) }
-                    </div>
-                }
+        } else {
+            html! {
+                <div class="cards-container">
+                    { for self.cards.iter().map(c) }
+                </div>
             }
         }
     }

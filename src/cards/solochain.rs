@@ -50,19 +50,17 @@ impl<'a> Iterator for SoloChainIterator<'a> {
                     result.push(self.index);
                     self.previous = current;
                     self.index += 1;
+                } else if result.len() >= 5 {
+                    self.index = start_at;
+                    self.start_val = current;
+                    return Some(result);
                 } else {
-                    if result.len() >= 5 {
-                        self.index = start_at;
-                        self.start_val = current;
-                        return Some(result);
-                    } else {
-                        result = Vec::new();
-                        result.push(self.index);
-                        start_at_moved = false;
-                        self.start_val = current;
-                        self.previous = current;
-                        self.index += 1;
-                    }
+                    result = Vec::new();
+                    result.push(self.index);
+                    start_at_moved = false;
+                    self.start_val = current;
+                    self.previous = current;
+                    self.index += 1;
                 }
             }
             if result.len() >= 5 {
@@ -83,7 +81,7 @@ impl SoloChain {
     pub fn is_solo_chain(cards: &[Card]) -> bool {
         let mut prev: u32 = 0;
 
-        cards.into_iter().fold(true, |ret, curr| {
+        cards.iter().fold(true, |ret, curr| {
             if prev == 0 {
                 prev = curr.value;
                 true
@@ -100,7 +98,7 @@ impl SoloChain {
 
     pub fn search_greater_cards(cards: &[Card], greater_than: &[Card]) -> Option<Vec<usize>> {
         if !greater_than.is_empty() {
-            let indices = SoloChainSearch { cards: cards }.into_iter().find(|x| {
+            let indices = SoloChainSearch { cards }.into_iter().find(|x| {
                 cards[x[0]].value > greater_than[0].value && x.len() >= greater_than.len()
             });
 
@@ -114,7 +112,7 @@ impl SoloChain {
     }
 
     pub fn search_longest_cards(cards: &[Card]) -> Option<Vec<usize>> {
-        let iter = SoloChainSearch { cards: cards };
+        let iter = SoloChainSearch { cards };
         let result =
             iter.into_iter().fold(
                 Vec::new(),

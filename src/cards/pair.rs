@@ -29,10 +29,7 @@ impl<'a> Iterator for PairIterator<'a> {
 
         if self.index + 1 < self.cards.0.len() {
             while self.index + 1 < self.cards.0.len() {
-                if !Pair::is_pair(&vec![
-                    self.cards.0[self.index],
-                    self.cards.0[self.index + 1],
-                ]) {
+                if !Pair::is_pair(&[self.cards.0[self.index], self.cards.0[self.index + 1]]) {
                     self.index += 1;
                 } else {
                     result = vec![self.index, self.index + 1];
@@ -65,13 +62,19 @@ impl Pair {
     pub fn split_from_cards(cards: &mut Vec<Card>) -> Vec<Card> {
         let mut result = Vec::new();
 
-        match PairSearch(cards).into_iter().nth(0) {
+        /*match PairSearch(cards).into_iter().nth(0) {
             Some(x) => {
                 for _ in 0..2 {
                     result.push(cards.remove(x[0]));
                 }
             }
             _ => (),
+        }*/
+
+        if let Some(x) = PairSearch(cards).into_iter().nth(0) {
+            for _ in 0..2 {
+                result.push(cards.remove(x[0]));
+            }
         }
 
         result

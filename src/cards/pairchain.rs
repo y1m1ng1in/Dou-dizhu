@@ -54,23 +54,21 @@ impl<'a> Iterator for PairChainIterator<'a> {
                     result.push(self.index + 1);
                     self.previous = current;
                     self.index += 2;
+                } else if result.len() >= 6 {
+                    self.index = start_at;
+                    self.start_val = current;
+                    return Some(result);
                 } else {
-                    if result.len() >= 6 {
-                        self.index = start_at;
+                    result = Vec::new();
+                    if Pair::is_pair(&self.cards[self.index..self.index + 2]) {
+                        result.push(self.index);
+                        result.push(self.index + 1);
+                        start_at_moved = false;
                         self.start_val = current;
-                        return Some(result);
+                        self.previous = current;
+                        self.index += 2;
                     } else {
-                        result = Vec::new();
-                        if Pair::is_pair(&self.cards[self.index..self.index + 2]) {
-                            result.push(self.index);
-                            result.push(self.index + 1);
-                            start_at_moved = false;
-                            self.start_val = current;
-                            self.previous = current;
-                            self.index += 2;
-                        } else {
-                            self.index += 1;
-                        }
+                        self.index += 1;
                     }
                 }
             }
@@ -97,12 +95,10 @@ impl PairChain {
                 if Pair::is_pair(&cards[i..i + 2]) {
                     if previous == 0 {
                         previous = cards[i].value;
+                    } else if cards[i].value != previous + 1 {
+                        return false;
                     } else {
-                        if cards[i].value != previous + 1 {
-                            return false;
-                        } else {
-                            previous = cards[i].value;
-                        }
+                        previous = cards[i].value;
                     }
                 } else {
                     return false;
@@ -116,7 +112,7 @@ impl PairChain {
 
     pub fn search_greater_cards(cards: &[Card], greater_than: &[Card]) -> Option<Vec<usize>> {
         if !greater_than.is_empty() {
-            let indices = PairChainSearch { cards: cards }.into_iter().find(|x| {
+            let indices = PairChainSearch { cards }.into_iter().find(|x| {
                 cards[x[0]].value > greater_than[0].value && x.len() >= greater_than.len()
             });
 
@@ -130,7 +126,7 @@ impl PairChain {
     }
 
     pub fn search_longest_cards(cards: &[Card]) -> Option<Vec<usize>> {
-        let iter = PairChainSearch { cards: cards };
+        let iter = PairChainSearch { cards };
         let result =
             iter.into_iter().fold(
                 Vec::new(),

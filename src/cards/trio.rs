@@ -29,7 +29,7 @@ impl<'a> Iterator for TrioIterator<'a> {
 
         if self.index + 2 < self.cards.0.len() {
             while self.index + 2 < self.cards.0.len() {
-                if !Trio::is_trio(&vec![
+                if !Trio::is_trio(&[
                     self.cards.0[self.index],
                     self.cards.0[self.index + 1],
                     self.cards.0[self.index + 2],
@@ -66,13 +66,10 @@ impl Trio {
     pub fn split_from_cards(cards: &mut Vec<Card>) -> Vec<Card> {
         let mut result = Vec::new();
 
-        match TrioSearch(cards).into_iter().nth(0) {
-            Some(x) => {
-                for _ in 0..3 {
-                    result.push(cards.remove(x[0]));
-                }
+        if let Some(x) = TrioSearch(cards).into_iter().nth(0) {
+            for _ in 0..3 {
+                result.push(cards.remove(x[0]));
             }
-            _ => (),
         }
 
         result

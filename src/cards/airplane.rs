@@ -11,14 +11,14 @@ impl Airplane {
         let mut result: Vec<Card> = Vec::new();
 
         if trio_num != 0 {
-            for i in start..start + 3 * trio_num {
-                result.push(cards[i].clone());
+            for i in cards.iter().skip(start).take(3 * trio_num) {
+                result.push(*i);
             }
-            for i in 0..start {
-                result.push(cards[i].clone());
+            for i in cards.iter().take(start) {
+                result.push(*i);
             }
-            for i in start + 3 * trio_num..cards.len() {
-                result.push(cards[i].clone());
+            for i in cards.iter().skip(start + 3 * trio_num) {
+                result.push(*i);
             }
         }
 

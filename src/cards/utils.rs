@@ -65,7 +65,7 @@ pub fn compare(c1: &[Card], c2: &[Card]) -> i32 {
             Pattern::SoloChain => SoloChain::compare(c1, c2),
             Pattern::Trio => Trio::compare(c1, c2),
             Pattern::Pair => Pair::compare(c1, c2),
-            Pattern::Solo => Card::compare(&c1[0], &c2[0]),
+            Pattern::Solo => Card::compare(c1[0], c2[0]),
             _ => -1,
         }
     } else {
@@ -81,7 +81,7 @@ pub fn compare_known_pattern(c1: &[Card], c2: &[Card], p: Pattern) -> i32 {
         Pattern::SoloChain => SoloChain::compare(c1, c2),
         Pattern::Trio => Trio::compare(c1, c2),
         Pattern::Pair => Pair::compare(c1, c2),
-        Pattern::Solo => Card::compare(&c1[0], &c2[0]),
+        Pattern::Solo => Card::compare(c1[0], c2[0]),
         _ => -1,
     }
 }

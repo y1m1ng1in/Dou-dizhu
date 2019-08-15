@@ -10,7 +10,7 @@ use super::super::cards::trio::TrioSearch;
 use super::super::cards::utils::*;
 use std::fmt;
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Strategy {
     bombs: Vec<Card>,
     chains: Vec<Card>,
@@ -41,23 +41,23 @@ impl fmt::Display for Strategy {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut s = String::new();
 
-        s = s + "Bombs:\n";
+        s += "Bombs:\n";
         for i in &self.bombs {
             s = s + &i.to_string();
         }
-        s = s + "Chains:\n";
+        s += "Chains:\n";
         for i in &self.chains {
             s = s + &i.to_string();
         }
-        s = s + "Trios:\n";
+        s += "Trios:\n";
         for i in &self.trios {
             s = s + &i.to_string();
         }
-        s = s + "Pairs:\n";
+        s += "Pairs:\n";
         for i in &self.pairs {
             s = s + &i.to_string();
         }
-        s = s + "Solos:\n";
+        s += "Solos:\n";
         for i in &self.solos {
             s = s + &i.to_string();
         }
@@ -137,9 +137,9 @@ impl Strategy {
     }
 
     fn search_longest_chain(cards: &[Card]) -> (Option<Vec<usize>>, Pattern) {
-        let mut airplane = Airplane::search_longest_cards(cards).unwrap_or(Vec::new());
-        let pairchain = PairChain::search_longest_cards(cards).unwrap_or(Vec::new());
-        let solochain = SoloChain::search_longest_cards(cards).unwrap_or(Vec::new());
+        let mut airplane = Airplane::search_longest_cards(cards).unwrap_or_default();
+        let pairchain = PairChain::search_longest_cards(cards).unwrap_or_default();
+        let solochain = SoloChain::search_longest_cards(cards).unwrap_or_default();
 
         let airplane_len = airplane.len();
         let pairchain_len = pairchain.len();
@@ -191,39 +191,35 @@ impl Strategy {
 
         match pattern {
             Pattern::Bomb => {
-                indices =
-                    Bomb::search_greater_cards(&self.bombs, greater_than).unwrap_or(Vec::new());
+                indices = Bomb::search_greater_cards(&self.bombs, greater_than).unwrap_or_default();
                 split_from_indice(&mut self.bombs, &indices)
             }
             Pattern::Airplane => {
-                indices = Airplane::search_greater_cards(&self.chains, greater_than)
-                    .unwrap_or(Vec::new());
+                indices =
+                    Airplane::search_greater_cards(&self.chains, greater_than).unwrap_or_default();
                 indices.sort_unstable();
                 split_from_indice(&mut self.chains, &indices)
             }
             Pattern::SoloChain => {
-                indices = SoloChain::search_greater_cards(&self.chains, greater_than)
-                    .unwrap_or(Vec::new());
+                indices =
+                    SoloChain::search_greater_cards(&self.chains, greater_than).unwrap_or_default();
                 split_from_indice(&mut self.chains, &indices)
             }
             Pattern::PairChain => {
-                indices = PairChain::search_greater_cards(&self.chains, greater_than)
-                    .unwrap_or(Vec::new());
+                indices =
+                    PairChain::search_greater_cards(&self.chains, greater_than).unwrap_or_default();
                 split_from_indice(&mut self.chains, &indices)
             }
             Pattern::Trio => {
-                indices =
-                    Trio::search_greater_cards(&self.trios, greater_than).unwrap_or(Vec::new());
+                indices = Trio::search_greater_cards(&self.trios, greater_than).unwrap_or_default();
                 split_from_indice(&mut self.trios, &indices)
             }
             Pattern::Pair => {
-                indices =
-                    Pair::search_greater_cards(&self.pairs, greater_than).unwrap_or(Vec::new());
+                indices = Pair::search_greater_cards(&self.pairs, greater_than).unwrap_or_default();
                 split_from_indice(&mut self.pairs, &indices)
             }
             Pattern::Solo => {
-                indices =
-                    Card::search_greater_cards(&self.solos, greater_than).unwrap_or(Vec::new());
+                indices = Card::search_greater_cards(&self.solos, greater_than).unwrap_or_default();
                 split_from_indice(&mut self.solos, &indices)
             }
             Pattern::Invalid => Vec::new(),
@@ -249,38 +245,34 @@ impl Strategy {
 
         match pattern {
             Pattern::Bomb => {
-                indices =
-                    Bomb::search_greater_cards(&all_cards, greater_than).unwrap_or(Vec::new());
+                indices = Bomb::search_greater_cards(&all_cards, greater_than).unwrap_or_default();
                 removed = split_from_indice(&mut all_cards, &indices);
             }
             Pattern::Airplane => {
                 indices =
-                    Airplane::search_greater_cards(&all_cards, greater_than).unwrap_or(Vec::new());
+                    Airplane::search_greater_cards(&all_cards, greater_than).unwrap_or_default();
                 removed = split_from_indice(&mut all_cards, &indices);
             }
             Pattern::SoloChain => {
                 indices =
-                    SoloChain::search_greater_cards(&all_cards, greater_than).unwrap_or(Vec::new());
+                    SoloChain::search_greater_cards(&all_cards, greater_than).unwrap_or_default();
                 removed = split_from_indice(&mut all_cards, &indices);
             }
             Pattern::PairChain => {
                 indices =
-                    PairChain::search_greater_cards(&all_cards, greater_than).unwrap_or(Vec::new());
+                    PairChain::search_greater_cards(&all_cards, greater_than).unwrap_or_default();
                 removed = split_from_indice(&mut all_cards, &indices);
             }
             Pattern::Trio => {
-                indices =
-                    Trio::search_greater_cards(&all_cards, greater_than).unwrap_or(Vec::new());
+                indices = Trio::search_greater_cards(&all_cards, greater_than).unwrap_or_default();
                 removed = split_from_indice(&mut all_cards, &indices);
             }
             Pattern::Pair => {
-                indices =
-                    Pair::search_greater_cards(&all_cards, greater_than).unwrap_or(Vec::new());
+                indices = Pair::search_greater_cards(&all_cards, greater_than).unwrap_or_default();
                 removed = split_from_indice(&mut all_cards, &indices);
             }
             Pattern::Solo => {
-                indices =
-                    Card::search_greater_cards(&all_cards, greater_than).unwrap_or(Vec::new());
+                indices = Card::search_greater_cards(&all_cards, greater_than).unwrap_or_default();
                 removed = split_from_indice(&mut all_cards, &indices);
             }
             Pattern::Invalid => {
@@ -337,7 +329,7 @@ impl Strategy {
 
     fn hand_in_first_from_chain(self: &mut Self, player: &[Card]) -> Vec<Card> {
         let (indices, pattern) = Strategy::search_longest_chain(&self.chains);
-        let chain_indices = indices.unwrap_or(Vec::new());
+        let chain_indices = indices.unwrap_or_default();
         let candidate = Strategy::clone_cards_from_indices(&chain_indices, &self.chains);
         let has_greater: Option<Vec<usize>>;
 
@@ -368,11 +360,11 @@ impl Strategy {
                 indices = TrioSearch(&self.trios)
                     .into_iter()
                     .last()
-                    .unwrap_or(Vec::new());
+                    .unwrap_or_default();
                 smallest = TrioSearch(&self.trios)
                     .into_iter()
                     .nth(0)
-                    .unwrap_or(Vec::new());
+                    .unwrap_or_default();
                 candidate = Strategy::clone_cards_from_indices(&indices, &self.trios);
                 if Trio::search_greater_cards(player, &candidate).is_none() {
                     split_from_indice(&mut self.trios, &smallest)
@@ -384,11 +376,11 @@ impl Strategy {
                 indices = PairSearch(&self.pairs)
                     .into_iter()
                     .last()
-                    .unwrap_or(Vec::new());
+                    .unwrap_or_default();
                 smallest = PairSearch(&self.pairs)
                     .into_iter()
                     .nth(0)
-                    .unwrap_or(Vec::new());
+                    .unwrap_or_default();
                 candidate = Strategy::clone_cards_from_indices(&indices, &self.pairs);
                 if Pair::search_greater_cards(player, &candidate).is_none() {
                     split_from_indice(&mut self.pairs, &smallest)
@@ -401,7 +393,7 @@ impl Strategy {
                     indices = vec![self.solos.len() - 1];
                     candidate = Strategy::clone_cards_from_indices(&indices, &self.solos);
                     if Card::search_greater_cards(player, &candidate).is_none() {
-                        split_from_indice(&mut self.solos, &vec![0])
+                        split_from_indice(&mut self.solos, &[0])
                     } else {
                         vec![]
                     }
@@ -418,7 +410,7 @@ impl Strategy {
 
         if indices.iter().max().unwrap_or(&cards.len()) < &cards.len() {
             for i in indices {
-                result.push(cards[*i].clone());
+                result.push(cards[*i]);
             }
         }
 

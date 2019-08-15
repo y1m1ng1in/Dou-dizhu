@@ -26,14 +26,14 @@ impl Card {
         }
     }
 
-    pub fn display(&self) {
+    pub fn display(self) {
         println! {"{}", self.value};
     }
 
     pub fn search_greater_cards(cards: &[Card], greater_than: &[Card]) -> Option<Vec<usize>> {
         if greater_than.len() == 1 {
-            for i in 0..cards.len() {
-                if cards[i].value > greater_than[0].value {
+            for (i, item) in cards.iter().enumerate() {
+                if item.value > greater_than[0].value {
                     return Some(vec![i]);
                 }
             }
@@ -43,7 +43,7 @@ impl Card {
         }
     }
 
-    pub fn compare(c1: &Card, c2: &Card) -> i32 {
+    pub fn compare(c1: Card, c2: Card) -> i32 {
         if c1.value > c2.value {
             1
         } else {
@@ -86,7 +86,7 @@ impl Eq for Card {}
 
 impl fmt::Debug for Card {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
+        writeln!(
             f,
             "Card {{ value: {}, suit: {}, selected: {} }}\n",
             self.value, self.suit, self.selected
@@ -96,7 +96,7 @@ impl fmt::Debug for Card {
 
 impl fmt::Display for Card {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
+        writeln!(
             f,
             "Card {{ value: {}, suit: {}, selected: {} }}\n",
             self.value, self.suit, self.selected

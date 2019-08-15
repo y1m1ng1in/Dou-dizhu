@@ -1,5 +1,5 @@
-use super::cards::card::Card;
-use super::cards::card::Suit;
+use super::super::cards::card::Card;
+use super::super::cards::card::Suit;
 use yew::prelude::*;
 
 pub struct CardUI {
@@ -41,8 +41,7 @@ impl Component for CardUI {
         match msg {
             Msg::Clicked => {
                 if let Some(ref onsignal) = self.onsignal {
-                    //self.card.selected = true; // move to card buffer?
-                    onsignal.emit(self.card.clone());
+                    onsignal.emit(self.card);
                 }
             }
         }
@@ -58,7 +57,7 @@ impl Component for CardUI {
 
 impl Renderable<CardUI> for CardUI {
     fn view(&self) -> Html<Self> {
-        let (val, suit, color) = display_card(&self.card);
+        let (val, suit, color) = display_card(self.card);
         let style1 = "card-text ".to_string() + &color;
         let style2 = "card-img ".to_string() + &color;
         html! {
@@ -70,7 +69,7 @@ impl Renderable<CardUI> for CardUI {
     }
 }
 
-fn display_card(card: &Card) -> (String, String, String) {
+fn display_card(card: Card) -> (String, String, String) {
     let str_value: String;
     let str_suit: String;
     let str_class: String;
