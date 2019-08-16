@@ -62,15 +62,6 @@ impl Pair {
     pub fn split_from_cards(cards: &mut Vec<Card>) -> Vec<Card> {
         let mut result = Vec::new();
 
-        /*match PairSearch(cards).into_iter().nth(0) {
-            Some(x) => {
-                for _ in 0..2 {
-                    result.push(cards.remove(x[0]));
-                }
-            }
-            _ => (),
-        }*/
-
         if let Some(x) = PairSearch(cards).into_iter().nth(0) {
             for _ in 0..2 {
                 result.push(cards.remove(x[0]));
@@ -80,7 +71,6 @@ impl Pair {
         result
     }
 
-    // XXX remove pair pattern validation?
     pub fn compare(c1: &[Card], c2: &[Card]) -> i32 {
         if Pair::is_pair(c1) && Pair::is_pair(c2) {
             if c1[0].value > c2[0].value {

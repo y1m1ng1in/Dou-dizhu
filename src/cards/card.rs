@@ -43,8 +43,10 @@ impl Card {
         }
     }
 
-    pub fn compare(c1: Card, c2: Card) -> i32 {
-        if c1.value > c2.value {
+    pub fn compare(c1: &[Card], c2: &[Card]) -> i32 {
+        if c1.len() != 1 || c2.len() != 1{
+            -1
+        } else if c1[0].value > c2[0].value {
             1
         } else {
             0

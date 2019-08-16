@@ -188,42 +188,49 @@ impl Strategy {
         pattern: Pattern,
     ) -> Vec<Card> {
         let mut indices;
+        let mut ret: Vec<Card>;
 
         match pattern {
             Pattern::Bomb => {
                 indices = Bomb::search_greater_cards(&self.bombs, greater_than).unwrap_or_default();
-                split_from_indice(&mut self.bombs, &indices)
+                ret = split_from_indice(&mut self.bombs, &indices)
             }
             Pattern::Airplane => {
                 indices =
                     Airplane::search_greater_cards(&self.chains, greater_than).unwrap_or_default();
                 indices.sort_unstable();
-                split_from_indice(&mut self.chains, &indices)
+                ret = split_from_indice(&mut self.chains, &indices)
             }
             Pattern::SoloChain => {
                 indices =
                     SoloChain::search_greater_cards(&self.chains, greater_than).unwrap_or_default();
-                split_from_indice(&mut self.chains, &indices)
+                ret = split_from_indice(&mut self.chains, &indices)
             }
             Pattern::PairChain => {
                 indices =
                     PairChain::search_greater_cards(&self.chains, greater_than).unwrap_or_default();
-                split_from_indice(&mut self.chains, &indices)
+                ret = split_from_indice(&mut self.chains, &indices)
             }
             Pattern::Trio => {
                 indices = Trio::search_greater_cards(&self.trios, greater_than).unwrap_or_default();
-                split_from_indice(&mut self.trios, &indices)
+                ret = split_from_indice(&mut self.trios, &indices)
             }
             Pattern::Pair => {
                 indices = Pair::search_greater_cards(&self.pairs, greater_than).unwrap_or_default();
-                split_from_indice(&mut self.pairs, &indices)
+                ret = split_from_indice(&mut self.pairs, &indices)
             }
             Pattern::Solo => {
                 indices = Card::search_greater_cards(&self.solos, greater_than).unwrap_or_default();
-                split_from_indice(&mut self.solos, &indices)
+                ret = split_from_indice(&mut self.solos, &indices)
             }
-            Pattern::Invalid => Vec::new(),
+            Pattern::Invalid => ret = Vec::new(),
         }
+
+        if pattern != Pattern::Bomb && pattern != Pattern::Invalid && ret.is_empty() {
+            ret = Bomb::split_from_cards(&mut self.bombs);
+        }
+
+        ret
     }
 
     pub fn hand_in_greater_by_merged(

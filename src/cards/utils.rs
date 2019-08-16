@@ -54,10 +54,10 @@ pub fn get_pattern(cards: &[Card]) -> Pattern {
     }
 }
 
-pub fn compare(c1: &[Card], c2: &[Card]) -> i32 {
-    let p = get_pattern(c1);
-
-    if get_pattern(c2) == p {
+pub fn compare_known_pattern(c1: &[Card], c2: &[Card], p: Pattern) -> i32 {
+    if Bomb::is_bomb(c1) && !Bomb::is_bomb(c2) {
+        1
+    } else {
         match p {
             Pattern::Bomb => Bomb::compare(c1, c2),
             Pattern::Airplane => Airplane::compare(c1, c2),
@@ -65,23 +65,8 @@ pub fn compare(c1: &[Card], c2: &[Card]) -> i32 {
             Pattern::SoloChain => SoloChain::compare(c1, c2),
             Pattern::Trio => Trio::compare(c1, c2),
             Pattern::Pair => Pair::compare(c1, c2),
-            Pattern::Solo => Card::compare(c1[0], c2[0]),
+            Pattern::Solo => Card::compare(c1, c2),
             _ => -1,
         }
-    } else {
-        -1
-    }
-}
-
-pub fn compare_known_pattern(c1: &[Card], c2: &[Card], p: Pattern) -> i32 {
-    match p {
-        Pattern::Bomb => Bomb::compare(c1, c2),
-        Pattern::Airplane => Airplane::compare(c1, c2),
-        Pattern::PairChain => PairChain::compare(c1, c2),
-        Pattern::SoloChain => SoloChain::compare(c1, c2),
-        Pattern::Trio => Trio::compare(c1, c2),
-        Pattern::Pair => Pair::compare(c1, c2),
-        Pattern::Solo => Card::compare(c1[0], c2[0]),
-        _ => -1,
     }
 }

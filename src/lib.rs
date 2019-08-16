@@ -58,7 +58,7 @@ impl Component for Model {
             has_result: false,
             mission: 1u32,
             game_message: String::new(),
-            total_mission: 4u32,
+            total_mission: 6u32,
         }
     }
 
@@ -155,7 +155,7 @@ impl Component for Model {
             Msg::ObtainCard(selection) => {
                 if selection {
                     self.mission += 1;
-                    if self.mission >= self.total_mission {
+                    if self.mission > self.total_mission {
                         self.mission = 1;
                     }
                 }
