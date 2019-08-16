@@ -44,9 +44,7 @@ This game has tons of ways to play, there are lots of mode to play as well. In t
 4. Repeat process 2 and 3 until either the player or the computer has no card left first. 
 
 ##### The Rules of Card Pattern and Value
-- **Individual cards are ranked.**<br> Colored Joker > Black & White Joker > 2 > Ace (A) > King (K) > Queen (Q) > Jack (J) > 10 > 9 > 8 > 7 > 6 > 5 > 4 > 3.
-
-- **Rocket** <br>*Colored Joker + black-and-white Joker* : <br>It can beat everything in the game. 
+- **Individual cards are ranked.**<br> 2 > Ace (A) > King (K) > Queen (Q) > Jack (J) > 10 > 9 > 8 > 7 > 6 > 5 > 4 > 3.
 
 - **Bomb** <br>*3-3-3-3 (the lowest ranking Bomb)<br>
 2-2-2-2 (the highest ranking Bomb)*<br>
@@ -74,52 +72,127 @@ Examples of illegal Chain: 2-3-4-5-6, 2-2-2-3-3-3 w/ A-A-7-7, K-A-2 + B&W Joker 
 #### An Example Illustrates the Operation of the Code
 
 ```rust
-// Yew is a frondend framework that employs Model-View-Controller pattern (MVC).
-use yew::services::ConsoleService;
-use yew::{html, Component, ComponentLink, Html, Renderable, ShouldRender};
-
-// the top-level model(M) of the app.
 pub struct Model {
-    console: ConsoleService,
-    dummy: u32,
+    console: ConsoleService,    // browser console log
+    player_cards: Vec<Card>,    // player owned card
+    player_buffer: Vec<Card>,   // player selected card to hand in
+    player_message: String,     // message output for player
+    computer_cards: Vec<Card>,  // computer owned card
+    computer_buffer: Vec<Card>, // computer handed cards in the last turn
+    computer_strategy: ComputerPlayer,  // computer's cards pattern strategy (in order to                                                          // reserve chains and bombs)
+    computer_pass: bool,        // computer pass this turn 
+    has_result: bool,           // whether current game has a winner
+    mission: u32,               // current game mission number
+    game_message: String,       // message for the whole game
+    total_mission: u32,         // total missions in this game
 }
 
-// all the updates operations to model 
 pub enum Msg {
-    Foo,
+    PlayerCardClicked(Card),    // event that player has selected a card in owned cards
+    PlayerBufferClicked(Card),  // event thta player has deselected a card in card buffer 
+    ObtainCard(bool),           // whether need to grab new cards from data.rs
+    PlayerHandIn,               // event that player hand in card
+    PlayerPass,                 // event that player pass this turn
 }
 
-// Implement controller(C) functions to manipulate model
 impl Component for Model {
     type Message = Msg;
     type Properties = ();
 
+    // Initialize the game state
     fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
+        // Fetch user's cards and computer player's cards
+        let (user, computer) = get_cards(1u32);
+
+        // Build up computer player's strategy: Pattern division by bombs, chains, trios, pairs
+        let strategy = ComputerPlayer::new(computer);
+
+        // Get all computer cards from strategy to display
+        let computer_card = strategy.display();
+
         Model {
-            console: ConsoleService::new(),
-            dummy: 0,
+            console: ConsoleService::new(), // initialize browser's console log function
+            player_cards: user,             // initialize user's owned cards
+            player_buffer: vec![],          // initialize an empty buffer for player buffer
+            player_message: String::new(),  // initialize empty string for user message
+            computer_cards: computer_card,  // initialize computer player's card
+            computer_buffer: vec![],        // initialize an empty buffer for computer player
+            computer_strategy: strategy,    // setup computer strategy
+            computer_pass: false,           // computer player cannot pass without a previous turn
+            has_result: false,              // do not have a result at the beginning
+            mission: 1u32,                  // the first mission
+            game_message: String::new(),    // initialize empty string for game message 
+            total_mission: 6u32,            // current total missions in this game
         }
     }
 
+    // this function trigger the HTML page updating, all the HTML elements are bound to the 
+    // strcut Model
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::Foo => {
-                self.console.log("A try to console service");
+            Msg::PlayerCardClicked(card) => {
+                // event: player clicked a card from its owned cards
+                // remove the clicked Card object from the vector, player_cards
+                // and append it to the player_buffer
             }
+            Msg::PlayerBufferClicked(card) => {
+                // event: player clicked a card from its card buffer
+                // remove the clicked Card object from the vector of player_buffer
+                // and append it to the vector, player_cards
+            }
+            Msg::PlayerHandIn => {
+                // event: player clicked "hand in" button
+                // if the pattern is invalid or the value is not greater than computer
+                // player handed cards, move all the cards in player_buffer to the
+                // player_cards
+                // otherwise, clear player_buffer, and computer player search for greater
+                // cards in the same pattern
+                // if computer player doesn't have such cards, pass
+            }
+            Msg::PlayerPass => {
+                // event: player clicked "pass" button
+                // clear player_buffer vector, and append all the cards in player_buffer
+                // to the player_cards
+                // computer player hand in cards based on its created "strategy"
+            }
+            Msg::ObtainCard(selection) => {
+                // obtain new two vectors of Card, from data.rs, one for user and the other 
+                // for computer player
+                // start up a new game
+                // setup all the fields in Model with initial states
+            }
+            true
         }
-        true
     }
 }
 
-// the top-level view(V) for model
+// The top-level HTML code.
+// The values in each element are bound to the struct Model
+// User triggered the changing of Model via HTML, and changed values will
+// trigger update() so the HTML page will be re-rendered without refresh the 
+// webpage
 impl Renderable<Model> for Model {
     fn view(&self) -> Html<Self> {
+        let pass_btn = match self.computer_buffer.len() {
+            0 => "display: none",
+            _ => "display: inline",
+        };
         html! {
             <div>
-                <h1>{ "Dou dizhu (tranditional Chinese card game) ---- A frontend project in Rust!" }</h1>
-                <h3>{ "Not implemented yet!" }</h3>
-                <button onclick=|_| Msg::Foo>{ "Look At Console" }</button>
-                <p>{ self.dummy }</p>
+                <SelectUI display=&self.has_result message=&self.game_message onsignal=Msg::ObtainCard />
+                <div class="computer-container">
+                    <CardBufUI cards=&self.computer_cards />
+                    <CardBufUI cards=&self.computer_buffer ispass=self.computer_pass />
+                </div>
+                <div class="user-container">
+                    <CardBufUI cards=&self.player_buffer onsignal=Msg::PlayerBufferClicked />
+                    <CardBufUI cards=&self.player_cards onsignal=Msg::PlayerCardClicked />
+                    <div class="user-button-container">
+                        <button onclick=|_| Msg::PlayerHandIn>{ "Hand in" }</button>
+                        <button style=pass_btn onclick=|_| Msg::PlayerPass>{ "Pass" }</button>
+                    </div>
+                    <p>{ &self.player_message }</p>
+                </div>
             </div>
         }
     }
@@ -135,11 +208,6 @@ cargo web build
 cargo web start
 ```
 
-Then open your browser: use the following url:
+Then open your browser: use the following url:<br>
 localhost:8000
 
-#### Schedule and Milestone
-July 20th: Finish game logic<br>
-July 27th: Finish game UI<br>
-Augest 3rd: Finish testing and bugs fixing<br>
-Augest 10th: Optimize UI and final delivery<br>
