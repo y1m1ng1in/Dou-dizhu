@@ -333,3 +333,19 @@ cargo web start
 Then open your browser: use the following url:<br>
 localhost:8000
 
+
+#### Run test code
+
+In your command line:
+
+```commandline
+# test in node.js environment
+wasm-pack test --node 
+```
+
+This test requries wasm-pack dependency (to get that):
+
+```commandline
+# visit wasm-pack website: https://rustwasm.github.io/wasm-pack/installer/
+curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+```
