@@ -199,6 +199,128 @@ impl Renderable<Model> for Model {
 }
 ```
 
+#### An Example Illustrates the **Core** Algorithm for pattern searching
+```rust
+// The following example demonstates the way that all the patterns are
+// searched from a slice of Card whose order has already been sorted 
+// in ascending form
+// 
+// Pair, Trio, SoloChain, PairChain implements this algorithm
+// Airplane is formed by Trios, and Pairs or Solos, which can reuse
+// the code in Trios, Solos and Pairs.
+//
+// Bomb is simple, and special in Dou-dizhu, thus not implement it. 
+//
+// Wrap up a slice of Card and search solo chains from that slice
+pub struct SoloChainSearch<'a> {
+    cards: &'a [Card],
+}
+
+// Fields are used to reserve current state before calling next()
+impl<'a> IntoIterator for SoloChainSearch<'a> {
+    type Item = Vec<usize>;
+    type IntoIter = SoloChainIterator<'a>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        SoloChainIterator {
+            cards: self.cards,
+            index: 0,
+            previous: 0,    
+            start_val: 0,   
+        }
+    }
+}
+
+pub struct SoloChainIterator<'a> {
+    cards: &'a [Card],  // a slice of Card
+    index: usize,       // current index of that slice
+    previous: u32,      // previous value of that Card
+    start_val: u32,     // the starting value of next()
+}
+
+// Iterator all the solochains from a slice of Card, next() returns 
+// a vector of indices in that slice
+// 
+// For example:
+// We have a group of Card with the following values:
+//     [3,4,5,6,7,8,9,10,13,14]
+// 
+// The 1st time next() returns:
+//     [0,1,2,3,4,5,6,7]
+// The 2nd time next() returns:
+//     [1,2,3,4,5,6,7]
+// The 3rd time next() returns:
+//     [2,3,4,5,6,7]
+// The 4rd time next() returns:
+//     [3,4,5,6,7] 
+// 
+// Notice that the length of a solochain must be greater than 4.
+// The above example demonstrates that all the solo chains are 
+// iterated
+impl<'a> Iterator for SoloChainIterator<'a> {
+    type Item = Vec<usize>;
+
+    fn next(&mut self) -> Option<Vec<usize>> {
+        let mut result: Vec<usize> = Vec::new();
+        let mut start_at = self.index;
+        let mut start_at_moved = false;
+
+        if self.index < self.cards.len() {
+            while self.index < self.cards.len() {
+                // Get the current value of current index (self.index)
+                let current = self.cards[self.index].value;
+
+                // if the current value is same as starting value
+                // increment the starting index
+                if self.start_val + 1 == current && !start_at_moved {
+                    start_at = self.index;
+                    start_at_moved = true;
+                }
+
+                if current == self.previous {
+                    // if the current value is same as the previous value
+                    // increment the self.index without doing anything
+                    self.index += 1;
+                } else if current == self.previous + 1 {
+                    // if the current value is greater than the previous value by 1
+                    // save that index and increment the self.index
+                    result.push(self.index);
+                    self.previous = current;
+                    self.index += 1;
+                } else if result.len() >= 5 {
+                    // if the current result vector of indices has already greater than 4
+                    // __AND__ previous value plus one is not equal to current value
+                    // which means the chain is broken
+                    // return the indices
+                    self.index = start_at;
+                    self.start_val = current;
+                    return Some(result);
+                } else {
+                    // if the chain is broken, and the length of index vector is not 
+                    // greater than 4. Clear the previous index vector, and let current 
+                    // self.index as the starting point
+                    result = Vec::new();
+                    result.push(self.index);
+                    start_at_moved = false;
+                    self.start_val = current;
+                    self.previous = current;
+                    self.index += 1;
+                }
+            }
+            if result.len() >= 5 {
+                self.start_val = self.cards[start_at].value;
+                self.index = start_at;
+                Some(result)
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    }
+}
+```
+
 #### Build and Run
 
 In your command line:
